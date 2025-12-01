@@ -1,0 +1,7 @@
+<svg width="800" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="300" fill="#DC2626"/>
+  <rect x="10" y="10" width="780" height="280" fill="none" stroke="#FBBF24" stroke-width="8"/>
+  <text x="400" y="120" font-family="Impact, sans-serif" font-size="72" fill="#FBBF24" text-anchor="middle" font-weight="bold">HO CHI MINH</text>
+  <text x="400" y="200" font-family="Impact, sans-serif" font-size="96" fill="#FBBF24" text-anchor="middle" font-weight="bold">ALE TRAIL</text>
+  <text x="400" y="260" font-family="Impact, sans-serif" font-size="32" fill="#FBBF24" text-anchor="middle">🍺 COLLECT 9 STAMPS · EARN A FREE HAT! 🍺</text>
+</svg>

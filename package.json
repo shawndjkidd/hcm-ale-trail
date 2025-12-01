@@ -1,0 +1,21 @@
+{
+  "name": "hcm-ale-trail",
+  "version": "1.0.0",
+  "description": "Ho Chi Minh Ale Trail - Collect stamps from 9 breweries and earn a free hat!",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build needed - static site'",
+    "start": "vercel dev"
+  },
+  "keywords": [
+    "ale-trail",
+    "craft-beer",
+    "ho-chi-minh",
+    "saigon",
+    "brewery"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {}
+}
