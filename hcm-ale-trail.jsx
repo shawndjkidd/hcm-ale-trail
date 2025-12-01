@@ -710,3 +710,7 @@ export default function HCMAleTrailApp() {
     </div>
   );
 }
+
+// Render the app
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<HCMAleTrailApp />);
