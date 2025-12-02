@@ -151,14 +151,14 @@ function App() {
 
   // BREWERIES - taglines will be looked up from translations
   const breweries = [
-    { id:1, name:"BIACRAFT", dist:"District 3", addr:"1 Le Ngo Cat, District 3", tagKey:"tag1", initials:"BC", color:"#e74c3c", mapsUrl:"https://maps.google.com/?q=BiaCraft+Artisan+Ales+1+Le+Ngo+Cat+District+3+Ho+Chi+Minh", ig:"https://www.instagram.com/biacraftartisanales/", fb:"https://facebook.com/biacraft", tags:"#hcmaletrail @biacraftartisanales" },
-    { id:2, name:"HEART OF DARKNESS", dist:"District 1", addr:"31D Ly Tu Trong, District 1", tagKey:"tag2", initials:"HD", color:"#2c3e50", mapsUrl:"https://maps.google.com/?q=Heart+of+Darkness+Craft+Brewery+31D+Ly+Tu+Trong+District+1+Ho+Chi+Minh", ig:"https://instagram.com/heartofdarknessbrewery", fb:"https://facebook.com/HeartOfDarknessBrewery", tags:"#hcmaletrail @heartofdarknessbrewery" },
-    { id:3, name:"DEME", dist:"District 3", addr:"201B Nam Ky Khoi Nghia, District 3", tagKey:"tag3", initials:"DM", color:"#27ae60", mapsUrl:"https://maps.google.com/?q=Deme+Brewing+201B+Nam+Ky+Khoi+Nghia+District+3+Ho+Chi+Minh", ig:"https://instagram.com/demebrewing", fb:"https://facebook.com/demebrewing", tags:"#hcmaletrail @demebrewing" },
-    { id:4, name:"STEERSMAN", dist:"Tan Binh", addr:"18B Cong Hoa, Tan Binh", tagKey:"tag4", initials:"SM", color:"#3498db", mapsUrl:"https://maps.google.com/?q=Steersman+Brewery+18B+Cong+Hoa+Tan+Binh+Ho+Chi+Minh", ig:"https://instagram.com/steersmanbrewery", fb:"https://facebook.com/steersmanbrewery", tags:"#hcmaletrail @steersmanbrewery" },
-    { id:5, name:"EAST WEST", dist:"District 1", addr:"181-185 Ly Tu Trong, District 1", tagKey:"tag5", initials:"EW", color:"#f39c12", mapsUrl:"https://maps.google.com/?q=East+West+Brewing+Co+181+Ly+Tu+Trong+District+1+Ho+Chi+Minh", ig:"https://instagram.com/eastwestbrewing", fb:"https://facebook.com/eastwestbrewery", tags:"#hcmaletrail @eastwestbrewing" },
-    { id:6, name:"ROOSTER", dist:"District 1", addr:"31 Ho Huan Nghiep, District 1", tagKey:"tag6", initials:"RB", color:"#e67e22", mapsUrl:"https://maps.google.com/?q=Rooster+Beers+31+Ho+Huan+Nghiep+District+1+Ho+Chi+Minh", ig:"https://instagram.com/roosterbeers", fb:"https://facebook.com/roosterbeers", tags:"#hcmaletrail @roosterbeers" },
-    { id:7, name:"7 BRIDGES", dist:"District 1", addr:"25 Ly Tu Trong, District 1", tagKey:"tag7", initials:"7B", color:"#9b59b6", mapsUrl:"https://maps.google.com/?q=7+Bridges+Brewing+25+Ly+Tu+Trong+District+1+Ho+Chi+Minh", ig:"https://instagram.com/7bridgesbrewing", fb:"https://facebook.com/7BridgesBrewingCo", tags:"#hcmaletrail @7bridgesbrewing" },
-    { id:8, name:"BELGO", dist:"District 1", addr:"159A Nguyen Van Thu, District 1", tagKey:"tag8", initials:"BG", color:"#c0392b", mapsUrl:"https://maps.google.com/?q=Belgo+Belgian+Craft+Beer+159A+Nguyen+Van+Thu+District+1+Ho+Chi+Minh", ig:"https://instagram.com/belgosaigon", fb:"https://facebook.com/belgosaigon", tags:"#hcmaletrail @belgosaigon" }
+    { id:1, name:"BIACRAFT", dist:"District 3", addr:"1 Le Ngo Cat, District 3", tagKey:"tag1", initials:"BC", color:"#e74c3c", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdK7Ckh29Bn9ivYjVNAlJWTyN9PslADW92zaCphCTvvddAEnCSxi_dlY2iMY5clflVN1yXCMdbq2AVVO_ioqKx1dnw5DeOEkBnV7Eo_atNA8_YYr8gV2anEALnH7Ci0AlV710hBPf3vOEYmT0FhYOf2ZbiUKS-NfsOPf6Sy1f_x1Ncn8Odmv0Ec=w1280", mapsUrl:"https://maps.google.com/?q=BiaCraft+Artisan+Ales+1+Le+Ngo+Cat+District+3+Ho+Chi+Minh", ig:"https://www.instagram.com/biacraftartisanales/", fb:"https://facebook.com/biacraft", tags:"#hcmaletrail @biacraftartisanales" },
+    { id:2, name:"HEART OF DARKNESS", dist:"District 1", addr:"31D Ly Tu Trong, District 1", tagKey:"tag2", initials:"HD", color:"#2c3e50", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdDal3ZRQ0-YCuLFCERn5sfV3zjleSH-50uCOFbQgeLBNGoWqluNGNfh7zAtFCQkeLbZ642_ay83YPNhpIWc-kq_u2_tg_rI-Kmwc45_-x5YQ3HPghm0_HD1eQPF4UknWmK61Q2Dzql4maOKWwZtO-x3a5d6Ahhn7pr625DX0NJpERvWB2q_BgY_Co=w1280", mapsUrl:"https://maps.google.com/?q=Heart+of+Darkness+Craft+Brewery+31D+Ly+Tu+Trong+District+1+Ho+Chi+Minh", ig:"https://instagram.com/heartofdarknessbrewery", fb:"https://facebook.com/HeartOfDarknessBrewery", tags:"#hcmaletrail @heartofdarknessbrewery" },
+    { id:3, name:"DEME", dist:"District 3", addr:"201B Nam Ky Khoi Nghia, District 3", tagKey:"tag3", initials:"DM", color:"#27ae60", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdZ2wqJkHlpA-r3oUWGRR8ORdu_ZlMxIfm-LR00eo0HxUB7QJvH4H1rqOOAY9iEpmm8YGkJdEpGUCRR5K8juFwsqZ1K6Ptuyptn1wsMRYfDqqzuRFB2nFwUJlmcITxc_w9dBpJOZOzO2AIEUHZq2f8Fwb3cRv3A6aFONpvCKwWt3Nk2-DmEMZOsytQ=w1280", mapsUrl:"https://maps.google.com/?q=Deme+Brewing+201B+Nam+Ky+Khoi+Nghia+District+3+Ho+Chi+Minh", ig:"https://instagram.com/demebrewing", fb:"https://facebook.com/demebrewing", tags:"#hcmaletrail @demebrewing" },
+    { id:4, name:"STEERSMAN", dist:"Tan Binh", addr:"18B Cong Hoa, Tan Binh", tagKey:"tag4", initials:"SM", color:"#3498db", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkf7k0Vs-ZyX2tCPnel531ZobxtdWA4bFdDXolqBsigbrB1eciN4oWcTTMcmD-T6CEtPnt3fvmxunZpSQczX32LOepHUUDpiEalgMsVhtotX7dTo2CBcIXr4MYuk4nv92VXLgbX2exbNIv32gHTtHOKWGfuS9p3PbW6qZ-3W4HNc7XNF_MeA3PlMvKY=w1280", mapsUrl:"https://maps.google.com/?q=Steersman+Brewery+18B+Cong+Hoa+Tan+Binh+Ho+Chi+Minh", ig:"https://instagram.com/steersmanbrewery", fb:"https://facebook.com/steersmanbrewery", tags:"#hcmaletrail @steersmanbrewery" },
+    { id:5, name:"EAST WEST", dist:"District 1", addr:"181-185 Ly Tu Trong, District 1", tagKey:"tag5", initials:"EW", color:"#f39c12", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdkQ7DIUeqpmOGC1jjZ_guFx6ZZeAPL6bCZIYy2l2KRybNHviagKuZXZnqCYeJw7XKkT5RDTIzL0UoQUZmTQ1BJRcGM5WQ0GGi_arfGg7gZQanAyysq_sMotaymA5kG61trRNhhKA0l_uXEY1kDlClBENoNON17ZAhXC8VKBVGd-tmSBA0Fas5AM88=w1280", mapsUrl:"https://maps.google.com/?q=East+West+Brewing+Co+181+Ly+Tu+Trong+District+1+Ho+Chi+Minh", ig:"https://instagram.com/eastwestbrewing", fb:"https://facebook.com/eastwestbrewery", tags:"#hcmaletrail @eastwestbrewing" },
+    { id:6, name:"ROOSTER", dist:"District 1", addr:"31 Ho Huan Nghiep, District 1", tagKey:"tag6", initials:"RB", color:"#e67e22", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCke6ZXB89vvBUEWhAOaAA9G1lC4_MsvZ4b8Hx_Q-r9FQnyKW0HjV5m9ggg9ZU6byWxtbx5x8uyBsv8r9j97jozow6nl9uZoiz8C_OHFWDSkcf2SRsFzQ09UbdrdfA-4cKvarEr4wUUm-58iZm04vrIkqPo1B-wmO6MobivQvMy9gK3evra6oybGaSlA=w1280", mapsUrl:"https://maps.google.com/?q=Rooster+Beers+31+Ho+Huan+Nghiep+District+1+Ho+Chi+Minh", ig:"https://instagram.com/roosterbeers", fb:"https://facebook.com/roosterbeers", tags:"#hcmaletrail @roosterbeers" },
+    { id:7, name:"7 BRIDGES", dist:"District 1", addr:"25 Ly Tu Trong, District 1", tagKey:"tag7", initials:"7B", color:"#9b59b6", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkcaFLgzmPjSp2MEKO6vUSgAReQHE8f8VYbxeJd0ph-o8l_mOOPaKoJluvOvTDS9ytC0N1_3g2kpvKiL88O9gA_Vm2ZsIYWfl9fSKEBdx_xVHzDQGcqiuq5zFZ-IH_ADMqofO7EwfZhHXF2SxEjZkru9kYZoL82dzFPhgGxyFyv1Qep47qzouNGlAjg=w1280", mapsUrl:"https://maps.google.com/?q=7+Bridges+Brewing+25+Ly+Tu+Trong+District+1+Ho+Chi+Minh", ig:"https://instagram.com/7bridgesbrewing", fb:"https://facebook.com/7BridgesBrewingCo", tags:"#hcmaletrail @7bridgesbrewing" },
+    { id:8, name:"BELGO", dist:"District 1", addr:"159A Nguyen Van Thu, District 1", tagKey:"tag8", initials:"BG", color:"#c0392b", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkfpeHaQ7DOVCrkiTbALlX3kjWHlMcO8ilBlxeVBC6rWBubr_YJ1izhjGGbyS92pyLDX0UXhbQfykzCWltoAnDvoGtLLhT63Lyww_2j3QwONC-LJhGDg4PemxOaqF8xwOtKGiBmdTWfLVPc8ihdNaXFDED_4CA85c6bbWlGhENPpExnslVEkH3F-aCk=w1280", mapsUrl:"https://maps.google.com/?q=Belgo+Belgian+Craft+Beer+159A+Nguyen+Van+Thu+District+1+Ho+Chi+Minh", ig:"https://instagram.com/belgosaigon", fb:"https://facebook.com/belgosaigon", tags:"#hcmaletrail @belgosaigon" }
   ];
 
   // Get translated tagline for brewery
@@ -187,7 +187,7 @@ function App() {
     )
   );
 
-  // BREWERY LIST
+  // BREWERY LIST WITH LOGOS
   const breweryList = breweries.map(b => {
     const has = stamps.includes(b.id);
     return e('div', { key:b.id, onClick:()=>setSelected(b), className:`${has?'bg-yellow-400':'bg-white'} border-4 border-black cursor-pointer active:scale-[0.98] transition-all` },
@@ -201,13 +201,14 @@ function App() {
         ),
         e('div', { className:'w-20 h-full flex items-center justify-center border-l-4 border-black border-dashed flex-shrink-0' },
           e('div', { 
-            className:`w-16 h-16 rounded-full overflow-hidden border-3 ${has?'border-green-500':'border-gray-400'} flex items-center justify-center relative`,
-            style: { backgroundColor: has ? b.color : '#e5e7eb' }
+            className:`w-16 h-16 rounded-full overflow-hidden border-3 ${has?'border-green-500':'border-gray-400'} bg-white flex items-center justify-center relative`
           },
-            e('span', { 
-              className:'text-xl font-bold', 
-              style: { color: has ? 'white' : '#9ca3af', fontFamily: 'Arial, sans-serif' } 
-            }, b.initials),
+            e('img', { 
+              src: b.logo, 
+              alt: b.name,
+              className: `w-full h-full object-cover ${has ? '' : 'opacity-40 grayscale'}`,
+              style: { display: 'block' }
+            }),
             has && e('div', { className:'absolute bottom-0 right-0 bg-green-500 rounded-full w-5 h-5 flex items-center justify-center border border-white' },
               e('span', { className:'text-white text-xs font-bold' }, '✓')
             )
@@ -296,10 +297,9 @@ function App() {
           ) :
           e('div', { className:'bg-green-600 border-4 border-black p-4 text-center' },
             e('div',{
-              className:'w-20 h-20 mx-auto rounded-full overflow-hidden border-2 border-white flex items-center justify-center mb-2',
-              style: { backgroundColor: selected.color }
+              className:'w-20 h-20 mx-auto rounded-full overflow-hidden border-2 border-white bg-white flex items-center justify-center mb-2'
             },
-              e('span', { className:'text-2xl font-bold text-white', style:{fontFamily:'Arial'} }, selected.initials)
+              e('img', { src: selected.logo, alt: selected.name, className:'w-full h-full object-cover' })
             ),
             e('p',{className:'text-3xl text-white',style:block},t.done)
           )
