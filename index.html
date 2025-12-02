@@ -19,13 +19,14 @@
 const e = React.createElement;
 const { useState, useEffect } = React;
 
-const block = { fontFamily: 'Impact, Haettenschweiler, "Arial Black", sans-serif', fontWeight: 900, letterSpacing: '-1px', textTransform: 'uppercase' };
-const breweryBlock = { ...block, letterSpacing: '-2px', lineHeight: '0.9' };
+const block = { fontFamily: 'Impact, Haettenschweiler, "Arial Black", sans-serif', fontWeight: 900, letterSpacing: '0.5px', textTransform: 'uppercase' };
+const breweryBlock = { ...block, letterSpacing: '1px', lineHeight: '0.95' };
 
 const Instagram = ({size=24}) => e('svg', {width:size,height:size,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"2",strokeLinecap:"round",strokeLinejoin:"round"}, e('rect',{x:"2",y:"2",width:"20",height:"20",rx:"5",ry:"5"}), e('path',{d:"M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"}), e('line',{x1:"17.5",y1:"6.5",x2:"17.51",y2:"6.5"}));
 const Facebook = ({size=24}) => e('svg', {width:size,height:size,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"2",strokeLinecap:"round",strokeLinejoin:"round"}, e('path',{d:"M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"}));
 const Messenger = ({size=24}) => e('svg', {width:size,height:size,viewBox:"0 0 24 24",fill:"currentColor"}, e('path',{d:"M12 2C6.36 2 2 6.13 2 11.7c0 2.91 1.19 5.44 3.14 7.17.16.13.26.35.27.57l.05 1.78c.04.57.61.94 1.13.71l1.98-.87c.17-.08.36-.1.55-.06.91.25 1.87.38 2.88.38 5.64 0 10-4.13 10-9.7C22 6.13 17.64 2 12 2zm5.89 7.58l-2.89 4.58c-.45.73-1.44.91-2.13.39l-2.3-1.72a.6.6 0 0 0-.72 0l-3.1 2.36c-.41.32-.96-.17-.68-.61l2.89-4.58c.45-.73 1.44-.91 2.13-.39l2.3 1.72a.6.6 0 0 0 .72 0l3.1-2.36c.41-.32.96.17.68.61z"}));
 const Copy = ({size=24}) => e('svg', {width:size,height:size,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"2",strokeLinecap:"round",strokeLinejoin:"round"}, e('rect',{x:"9",y:"9",width:"13",height:"13",rx:"2",ry:"2"}), e('path',{d:"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"}));
+const MapPin = ({size=24}) => e('svg', {width:size,height:size,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"2",strokeLinecap:"round",strokeLinejoin:"round"}, e('path',{d:"M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"}), e('circle',{cx:"12",cy:"10",r:"3"}));
 
 function App() {
   const [stamps, setStamps] = useState(() => {
@@ -40,12 +41,10 @@ function App() {
   const [copied, setCopied] = useState(false);
   const [autoStamped, setAutoStamped] = useState(false);
 
-  // Save stamps to localStorage
   useEffect(() => {
     localStorage.setItem('aletrail_stamps', JSON.stringify(stamps));
   }, [stamps]);
 
-  // Check URL for QR code auto-stamp
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const stampId = parseInt(params.get('stamp'));
@@ -61,14 +60,48 @@ function App() {
     }
   }, []);
 
-  const links = { website: 'https://www.hochiminhaletrail.com/', maps: 'https://www.google.com/maps/d/u/1/viewer?usp=sharing&mid=1ZO-30TD2syibuwwqGF7wDxwHACOEsBQ', ig: 'https://www.instagram.com/hcm.aletrail/', msg: 'https://www.messenger.com/login.php?next=https%3A%2F%2Fwww.messenger.com%2Ft%2F115480196509607%2F' };
+  const links = { 
+    website: 'https://www.hochiminhaletrail.com/', 
+    maps: 'https://www.google.com/maps/d/u/1/viewer?usp=sharing&mid=1ZO-30TD2syibuwwqGF7wDxwHACOEsBQ', 
+    ig: 'https://www.instagram.com/hcm.aletrail/', 
+    msg: 'https://m.me/HoChiMinhAleTrail'
+  };
+  
   const codes = { 1:'BIACRAFT2024', 2:'DARKNESS2024', 3:'DEME2024', 4:'STEERSMAN2024', 5:'EASTWEST2024', 6:'ROOSTER2024', 7:'BRIDGES2024', 8:'BELGO2024' };
   
   const txt = {
-    en: { stamps:"STAMPS", done:"DONE!", go:"GO!", code:"CODE", web:"WEBSITE", maps:"MAPS", faq:"FAQ", how:"HOW TO PLAY", s1:"GO TO ANY BREWERY", s2:"BUY BEER & GET:", s2a:"QR CODE", s2b:"OR SECRET CODE", s3:"GET STAMP!", s4:"8 STAMPS = FREE HAT!", rush:"NO RUSH!", scan:"SCAN QR", ask:"ASK FOR QR!", ok:"OK!", nope:"NOPE!", copy:"© 2024 HCM ALE TRAIL", copyTag:"COPY TAGS", copied:"COPIED!", welcome:"Welcome to the HCM Ale Trail! Visit 8 awesome taprooms across Saigon. Buy a drink, collect a stamp, and get a free Ale Trail hat at your last stop! No deadline — do it in a day or a year." },
-    vi: { stamps:"TEM", done:"XONG!", go:"OK!", code:"MÃ", web:"WEBSITE", maps:"MAPS", faq:"FAQ", how:"CÁCH CHƠI", s1:"ĐẾN QUÁN BIA", s2:"MUA BIA & LẤY:", s2a:"MÃ QR", s2b:"HOẶC MÃ SỐ", s3:"NHẬN TEM!", s4:"8 TEM = MŨ FREE!", rush:"TỪ TỪ!", scan:"QUÉT QR", ask:"HỎI MÃ QR!", ok:"OK!", nope:"SAI!", copy:"© 2024 ALE TRAIL", copyTag:"COPY TAGS", copied:"COPIED!", welcome:"Chào mừng đến HCM Ale Trail! Ghé 8 quán bia thủ công ở Sài Gòn. Mua bia, lấy tem, đổi mũ miễn phí! Không giới hạn thời gian." },
-    ko: { stamps:"스탬프", done:"완료!", go:"확인!", code:"코드", web:"WEBSITE", maps:"MAPS", faq:"FAQ", how:"방법", s1:"양조장 방문", s2:"맥주 & 받기:", s2a:"QR 코드", s2b:"또는 비밀코드", s3:"스탬프!", s4:"8개 = 무료모자!", rush:"천천히!", scan:"QR스캔", ask:"QR 요청!", ok:"OK!", nope:"오류!", copy:"© 2024 HCM", copyTag:"COPY", copied:"OK!", welcome:"HCM Ale Trail에 오신 것을 환영합니다! 사이공의 8개 탭룸을 방문하세요." },
-    ja: { stamps:"スタンプ", done:"完了!", go:"OK!", code:"コード", web:"WEBSITE", maps:"MAPS", faq:"FAQ", how:"遊び方", s1:"醸造所へ行く", s2:"ビール買って:", s2a:"QRコード", s2b:"または秘密コード", s3:"スタンプ!", s4:"8個=無料帽子!", rush:"ゆっくり!", scan:"QRスキャン", ask:"QR聞いて!", ok:"OK!", nope:"違う!", copy:"© 2024 HCM", copyTag:"COPY", copied:"OK!", welcome:"HCM Ale Trailへようこそ！サイゴンの8つのタップルームを訪れてください。" }
+    en: { 
+      stamps:"STAMPS", done:"DONE!", go:"GO!", code:"CODE", web:"WEBSITE", maps:"MAPS", faq:"FAQ", 
+      how:"HOW TO PLAY", s1:"GO TO ANY BREWERY", s2:"BUY BEER & GET:", s2a:"QR CODE", s2b:"OR SECRET CODE", 
+      s3:"GET STAMP!", s4:"8 STAMPS = FREE HAT!", rush:"NO RUSH!", scan:"SCAN QR", ask:"ASK FOR QR!", 
+      ok:"OK!", nope:"NOPE!", copy:"© 2024 HCM ALE TRAIL", copyTag:"COPY", copied:"COPIED!", 
+      directions:"DIRECTIONS", 
+      welcome:"Welcome to the HCM Ale Trail! Visit 8 awesome taprooms across Saigon. Buy a drink, collect a stamp, and get a free Ale Trail hat at your last stop! No deadline — do it in a day or a year." 
+    },
+    vi: { 
+      stamps:"TEM", done:"XONG!", go:"OK!", code:"MÃ", web:"WEBSITE", maps:"BẢN ĐỒ", faq:"FAQ", 
+      how:"CÁCH CHƠI", s1:"ĐẾN QUÁN BIA", s2:"MUA BIA & LẤY:", s2a:"MÃ QR", s2b:"HOẶC MÃ SỐ", 
+      s3:"NHẬN TEM!", s4:"8 TEM = MŨ FREE!", rush:"TỪ TỪ!", scan:"QUÉT QR", ask:"HỎI MÃ QR!", 
+      ok:"OK!", nope:"SAI!", copy:"© 2024 ALE TRAIL", copyTag:"COPY", copied:"COPIED!", 
+      directions:"CHỈ ĐƯỜNG",
+      welcome:"Chào mừng đến HCM Ale Trail! Ghé 8 quán bia thủ công ở Sài Gòn. Mua bia, lấy tem, đổi mũ miễn phí! Không giới hạn thời gian." 
+    },
+    ko: { 
+      stamps:"스탬프", done:"완료!", go:"확인!", code:"코드", web:"웹사이트", maps:"지도", faq:"FAQ", 
+      how:"방법", s1:"양조장 방문", s2:"맥주 & 받기:", s2a:"QR 코드", s2b:"또는 비밀코드", 
+      s3:"스탬프!", s4:"8개 = 무료모자!", rush:"천천히!", scan:"QR스캔", ask:"QR 요청!", 
+      ok:"OK!", nope:"오류!", copy:"© 2024 HCM", copyTag:"복사", copied:"완료!", 
+      directions:"길찾기",
+      welcome:"HCM Ale Trail에 오신 것을 환영합니다! 사이공의 8개 탭룸을 방문하세요. 음료를 사고, 스탬프를 모으고, 마지막에 무료 모자를 받으세요!" 
+    },
+    ja: { 
+      stamps:"スタンプ", done:"完了!", go:"OK!", code:"コード", web:"ウェブ", maps:"地図", faq:"FAQ", 
+      how:"遊び方", s1:"醸造所へ行く", s2:"ビール買って:", s2a:"QRコード", s2b:"または秘密コード", 
+      s3:"スタンプ!", s4:"8個=無料帽子!", rush:"ゆっくり!", scan:"QRスキャン", ask:"QR聞いて!", 
+      ok:"OK!", nope:"違う!", copy:"© 2024 HCM", copyTag:"コピー", copied:"完了!", 
+      directions:"道案内",
+      welcome:"HCM Ale Trailへようこそ！サイゴンの8つのタップルームを訪れて、ドリンクを買い、スタンプを集めて、無料の帽子をゲットしよう！" 
+    }
   };
   const t = txt[lang];
 
@@ -79,15 +112,16 @@ function App() {
     { c:'ja', f:'https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/1200px-Flag_of_Japan.svg.png' }
   ];
 
+  // BREWERIES WITH GOOGLE MAPS LINKS
   const breweries = [
-    { id:1, name:"BIACRAFT", dist:"District 3", addr:"📍 1 Le Ngo Cat, District 3", tagline:"Funky names, creative food, and the OG craft beer hangout.", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdK7Ckh29Bn9ivYjVNAlJWTyN9PslADW92zaCphCTvvddAEnCSxi_dlY2iMY5clflVN1yXCMdbq2AVVO_ioqKx1dnw5DeOEkBnV7Eo_atNA8_YYr8gV2anEALnH7Ci0AlV710hBPf3vOEYmT0FhYOf2ZbiUKS-NfsOPf6Sy1f_x1Ncn8Odmv0Ec=w1280", ig:"https://www.instagram.com/biacraftartisanales/", fb:"https://facebook.com/biacraft", tags:"#hcmaletrail @biacraftartisanales" },
-    { id:2, name:"HEART OF DARKNESS", dist:"District 1", addr:"📍 31D Ly Tu Trong, District 1", tagline:"Bold beers, bold branding. Known for IPAs, stouts, and indie taproom vibe.", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdDal3ZRQ0-YCuLFCERn5sfV3zjleSH-50uCOFbQgeLBNGoWqluNGNfh7zAtFCQkeLbZ642_ay83YPNhpIWc-kq_u2_tg_rI-Kmwc45_-x5YQ3HPghm0_HD1eQPF4UknWmK61Q2Dzql4maOKWwZtO-x3a5d6Ahhn7pr625DX0NJpERvWB2q_BgY_Co=w1280", ig:"https://instagram.com/heartofdarknessbrewery", fb:"https://facebook.com/HeartOfDarknessBrewery", tags:"#hcmaletrail @heartofdarknessbrewery" },
-    { id:3, name:"DEME", dist:"District 3", addr:"📍 201B Nam Ky Khoi Nghia, District 3", tagline:"Underground feel with clean, small-batch brews. A local hidden gem.", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdZ2wqJkHlpA-r3oUWGRR8ORdu_ZlMxIfm-LR00eo0HxUB7QJvH4H1rqOOAY9iEpmm8YGkJdEpGUCRR5K8juFwsqZ1K6Ptuyptn1wsMRYfDqqzuRFB2nFwUJlmcITxc_w9dBpJOZOzO2AIEUHZq2f8Fwb3cRv3A6aFONpvCKwWt3Nk2-DmEMZOsytQ=w1280", ig:"https://instagram.com/demebrewing", fb:"https://facebook.com/demebrewing", tags:"#hcmaletrail @demebrewing" },
-    { id:4, name:"STEERSMAN", dist:"Tan Binh", addr:"📍 18B Cong Hoa, Tan Binh", tagline:"Approachable beers and chill vibes. Great for groups and newcomers.", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkf7k0Vs-ZyX2tCPnel531ZobxtdWA4bFdDXolqBsigbrB1eciN4oWcTTMcmD-T6CEtPnt3fvmxunZpSQczX32LOepHUUDpiEalgMsVhtotX7dTo2CBcIXr4MYuk4nv92VXLgbX2exbNIv32gHTtHOKWGfuS9p3PbW6qZ-3W4HNc7XNF_MeA3PlMvKY=w1280", ig:"https://instagram.com/steersmanbrewery", fb:"https://facebook.com/steersmanbrewery", tags:"#hcmaletrail @steersmanbrewery" },
-    { id:5, name:"EAST WEST", dist:"District 1", addr:"📍 181-185 Ly Tu Trong, District 1", tagline:"Sleek brewhouse with bold beers, food, and rooftop. Award-winning!", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdkQ7DIUeqpmOGC1jjZ_guFx6ZZeAPL6bCZIYy2l2KRybNHviagKuZXZnqCYeJw7XKkT5RDTIzL0UoQUZmTQ1BJRcGM5WQ0GGi_arfGg7gZQanAyysq_sMotaymA5kG61trRNhhKA0l_uXEY1kDlClBENoNON17ZAhXC8VKBVGd-tmSBA0Fas5AM88=w1280", ig:"https://instagram.com/eastwestbrewing", fb:"https://facebook.com/eastwestbrewery", tags:"#hcmaletrail @eastwestbrewing" },
-    { id:6, name:"ROOSTER", dist:"District 1", addr:"📍 31 Ho Huan Nghiep, District 1", tagline:"Casual and affordable with clean styles. Great for local vibes.", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCke6ZXB89vvBUEWhAOaAA9G1lC4_MsvZ4b8Hx_Q-r9FQnyKW0HjV5m9ggg9ZU6byWxtbx5x8uyBsv8r9j97jozow6nl9uZoiz8C_OHFWDSkcf2SRsFzQ09UbdrdfA-4cKvarEr4wUUm-58iZm04vrIkqPo1B-wmO6MobivQvMy9gK3evra6oybGaSlA=w1280", ig:"https://instagram.com/roosterbeers", fb:"https://facebook.com/roosterbeers", tags:"#hcmaletrail @roosterbeers" },
-    { id:7, name:"7 BRIDGES", dist:"District 1", addr:"📍 25 Ly Tu Trong, District 1", tagline:"Born in Da Nang, focused on sustainability. Always something new!", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkcaFLgzmPjSp2MEKO6vUSgAReQHE8f8VYbxeJd0ph-o8l_mOOPaKoJluvOvTDS9ytC0N1_3g2kpvKiL88O9gA_Vm2ZsIYWfl9fSKEBdx_xVHzDQGcqiuq5zFZ-IH_ADMqofO7EwfZhHXF2SxEjZkru9kYZoL82dzFPhgGxyFyv1Qep47qzouNGlAjg=w1280", ig:"https://instagram.com/7bridgesbrewing", fb:"https://facebook.com/7BridgesBrewingCo", tags:"#hcmaletrail @7bridgesbrewing" },
-    { id:8, name:"BELGO", dist:"District 1", addr:"📍 159A Nguyen Van Thu, District 1", tagline:"Rich Belgian-style beers in a medieval space. Perfect for big pours.", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkfpeHaQ7DOVCrkiTbALlX3kjWHlMcO8ilBlxeVBC6rWBubr_YJ1izhjGGbyS92pyLDX0UXhbQfykzCWltoAnDvoGtLLhT63Lyww_2j3QwONC-LJhGDg4PemxOaqF8xwOtKGiBmdTWfLVPc8ihdNaXFDED_4CA85c6bbWlGhENPpExnslVEkH3F-aCk=w1280", ig:"https://instagram.com/belgosaigon", fb:"https://facebook.com/belgosaigon", tags:"#hcmaletrail @belgosaigon" }
+    { id:1, name:"BIACRAFT", dist:"District 3", addr:"1 Le Ngo Cat, District 3", tagline:"Funky names, creative food, and the OG craft beer hangout.", initials:"BC", color:"#e74c3c", mapsUrl:"https://maps.google.com/?q=BiaCraft+Artisan+Ales+1+Le+Ngo+Cat+District+3+Ho+Chi+Minh", ig:"https://www.instagram.com/biacraftartisanales/", fb:"https://facebook.com/biacraft", tags:"#hcmaletrail @biacraftartisanales" },
+    { id:2, name:"HEART OF DARKNESS", dist:"District 1", addr:"31D Ly Tu Trong, District 1", tagline:"Bold beers, bold branding. Known for IPAs, stouts, and indie taproom vibe.", initials:"HD", color:"#2c3e50", mapsUrl:"https://maps.google.com/?q=Heart+of+Darkness+Craft+Brewery+31D+Ly+Tu+Trong+District+1+Ho+Chi+Minh", ig:"https://instagram.com/heartofdarknessbrewery", fb:"https://facebook.com/HeartOfDarknessBrewery", tags:"#hcmaletrail @heartofdarknessbrewery" },
+    { id:3, name:"DEME", dist:"District 3", addr:"201B Nam Ky Khoi Nghia, District 3", tagline:"Underground feel with clean, small-batch brews. A local hidden gem.", initials:"DM", color:"#27ae60", mapsUrl:"https://maps.google.com/?q=Deme+Brewing+201B+Nam+Ky+Khoi+Nghia+District+3+Ho+Chi+Minh", ig:"https://instagram.com/demebrewing", fb:"https://facebook.com/demebrewing", tags:"#hcmaletrail @demebrewing" },
+    { id:4, name:"STEERSMAN", dist:"Tan Binh", addr:"18B Cong Hoa, Tan Binh", tagline:"Approachable beers and chill vibes. Great for groups and newcomers.", initials:"SM", color:"#3498db", mapsUrl:"https://maps.google.com/?q=Steersman+Brewery+18B+Cong+Hoa+Tan+Binh+Ho+Chi+Minh", ig:"https://instagram.com/steersmanbrewery", fb:"https://facebook.com/steersmanbrewery", tags:"#hcmaletrail @steersmanbrewery" },
+    { id:5, name:"EAST WEST", dist:"District 1", addr:"181-185 Ly Tu Trong, District 1", tagline:"Sleek brewhouse with bold beers, food, and rooftop. Award-winning!", initials:"EW", color:"#f39c12", mapsUrl:"https://maps.google.com/?q=East+West+Brewing+Co+181+Ly+Tu+Trong+District+1+Ho+Chi+Minh", ig:"https://instagram.com/eastwestbrewing", fb:"https://facebook.com/eastwestbrewery", tags:"#hcmaletrail @eastwestbrewing" },
+    { id:6, name:"ROOSTER", dist:"District 1", addr:"31 Ho Huan Nghiep, District 1", tagline:"Casual and affordable with clean styles. Great for local vibes.", initials:"RB", color:"#e67e22", mapsUrl:"https://maps.google.com/?q=Rooster+Beers+31+Ho+Huan+Nghiep+District+1+Ho+Chi+Minh", ig:"https://instagram.com/roosterbeers", fb:"https://facebook.com/roosterbeers", tags:"#hcmaletrail @roosterbeers" },
+    { id:7, name:"7 BRIDGES", dist:"District 1", addr:"25 Ly Tu Trong, District 1", tagline:"Born in Da Nang, focused on sustainability. Always something new!", initials:"7B", color:"#9b59b6", mapsUrl:"https://maps.google.com/?q=7+Bridges+Brewing+25+Ly+Tu+Trong+District+1+Ho+Chi+Minh", ig:"https://instagram.com/7bridgesbrewing", fb:"https://facebook.com/7BridgesBrewingCo", tags:"#hcmaletrail @7bridgesbrewing" },
+    { id:8, name:"BELGO", dist:"District 1", addr:"159A Nguyen Van Thu, District 1", tagline:"Rich Belgian-style beers in a medieval space. Perfect for big pours.", initials:"BG", color:"#c0392b", mapsUrl:"https://maps.google.com/?q=Belgo+Belgian+Craft+Beer+159A+Nguyen+Van+Thu+District+1+Ho+Chi+Minh", ig:"https://instagram.com/belgosaigon", fb:"https://facebook.com/belgosaigon", tags:"#hcmaletrail @belgosaigon" }
   ];
 
   const validate = () => {
@@ -113,7 +147,7 @@ function App() {
     )
   );
 
-  // BREWERY LIST
+  // BREWERY LIST WITH INITIALS AS FALLBACK
   const breweryList = breweries.map(b => {
     const has = stamps.includes(b.id);
     return e('div', { key:b.id, onClick:()=>setSelected(b), className:`${has?'bg-yellow-400':'bg-white'} border-4 border-black cursor-pointer active:scale-[0.98] transition-all` },
@@ -122,12 +156,18 @@ function App() {
           e('span', { className:'text-4xl text-yellow-400', style:block }, b.id)
         ),
         e('div', { className:'flex-1 px-2 py-1 flex flex-col justify-center min-w-0' },
-          e('h3', { className:'text-2xl sm:text-3xl md:text-4xl text-red-600 truncate', style:breweryBlock }, b.name),
+          e('h3', { className:'text-xl sm:text-2xl md:text-3xl text-red-600 truncate', style:breweryBlock }, b.name),
           e('p', { className:'text-sm sm:text-base text-red-500', style:block }, b.dist)
         ),
-        e('div', { className:'w-20 h-full flex items-center justify-center border-l-4 border-black border-dashed flex-shrink-0 p-1' },
-          e('div', { className:`w-16 h-16 rounded-full overflow-hidden border-2 ${has?'border-green-500':'border-gray-300'} bg-white flex items-center justify-center relative` },
-            e('img', { src:b.logo, className:`w-full h-full object-cover ${has?'':'opacity-40 grayscale'}`, onError:(ev)=>{ev.target.style.display='none';} }),
+        e('div', { className:'w-20 h-full flex items-center justify-center border-l-4 border-black border-dashed flex-shrink-0' },
+          e('div', { 
+            className:`w-16 h-16 rounded-full overflow-hidden border-3 ${has?'border-green-500':'border-gray-400'} flex items-center justify-center relative`,
+            style: { backgroundColor: has ? b.color : '#e5e7eb' }
+          },
+            e('span', { 
+              className:'text-xl font-bold', 
+              style: { color: has ? 'white' : '#9ca3af', fontFamily: 'Arial, sans-serif' } 
+            }, b.initials),
             has && e('div', { className:'absolute bottom-0 right-0 bg-green-500 rounded-full w-5 h-5 flex items-center justify-center border border-white' },
               e('span', { className:'text-white text-xs font-bold' }, '✓')
             )
@@ -171,26 +211,31 @@ function App() {
     )
   );
 
-  // BREWERY MODAL
+  // BREWERY MODAL WITH MAPS BUTTON
   const breweryModal = selected && e('div', { className:'fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-2' },
     e('div', { className:'bg-yellow-400 w-full max-w-sm border-4 border-black relative max-h-[90vh] overflow-y-auto' },
       e('button', { onClick:()=>{setSelected(null);setCode('');setError('');setCopied(false);setAutoStamped(false);}, className:'absolute top-2 right-2 bg-red-600 text-yellow-400 w-10 h-10 flex items-center justify-center border-4 border-black text-2xl z-10', style:block }, 'X'),
       e('div', { className:'p-3 pt-12' },
-        // Auto-stamped message
         autoStamped && stamps.includes(selected.id) && e('div', { className:'bg-green-600 border-4 border-black p-3 mb-2 text-center' },
           e('p', { className:'text-2xl text-white', style:block }, '🎉 STAMP COLLECTED!')
         ),
-        // QR Button
         e('button', { onClick:()=>setShowQR(true), className:'w-full bg-white border-4 border-red-600 p-3 mb-2 active:scale-95 transition-all' },
           e('div',{className:'text-5xl text-center'},'📱'),
           e('p',{className:'text-2xl text-red-600 text-center',style:block},t.scan)
         ),
-        // Name & Tagline
         e('div', { className:'bg-red-600 border-4 border-black p-3 mb-2' },
           e('h2',{className:'text-2xl sm:text-3xl text-yellow-400 text-center',style:breweryBlock},selected.name),
-          e('p',{className:'text-sm text-yellow-300 mt-1 text-center'},selected.addr),
+          e('p',{className:'text-sm text-yellow-300 mt-1 text-center'},'📍 '+selected.addr),
           e('p',{className:'text-xs text-yellow-200 mt-2 text-center italic'},selected.tagline)
         ),
+        // GOOGLE MAPS DIRECTIONS BUTTON
+        e('a', { 
+          href:selected.mapsUrl, 
+          target:'_blank', 
+          rel:'noopener noreferrer', 
+          className:'w-full bg-green-600 text-white py-3 mb-2 text-xl border-4 border-black flex items-center justify-center gap-2 active:scale-95 transition-all', 
+          style:block 
+        }, e(MapPin,{size:24}), t.directions),
         // Social buttons
         e('div', { className:'flex gap-2 mb-2' },
           e('a', { href:selected.ig, target:'_blank', rel:'noopener noreferrer', className:'flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 text-xl border-2 border-black flex items-center justify-center gap-1 active:scale-95 transition-all', style:block }, e(Instagram,{size:20}), 'IG'),
@@ -210,7 +255,12 @@ function App() {
             e('button', { onClick:validate, className:'w-full bg-green-600 text-white py-4 text-3xl border-4 border-black active:scale-95 transition-all', style:block }, t.go)
           ) :
           e('div', { className:'bg-green-600 border-4 border-black p-4 text-center' },
-            e('div',{className:'w-20 h-20 mx-auto rounded-full overflow-hidden border-2 border-white bg-white mb-2'},e('img',{src:selected.logo,className:'w-full h-full object-cover'})),
+            e('div',{
+              className:'w-20 h-20 mx-auto rounded-full overflow-hidden border-2 border-white flex items-center justify-center mb-2',
+              style: { backgroundColor: selected.color }
+            },
+              e('span', { className:'text-2xl font-bold text-white', style:{fontFamily:'Arial'} }, selected.initials)
+            ),
             e('p',{className:'text-3xl text-white',style:block},t.done)
           )
       )
@@ -219,14 +269,11 @@ function App() {
 
   return e('div', { className:'min-h-screen bg-red-600 p-2' },
     e('div', { className:'max-w-md mx-auto' },
-      // FLAGS
       e('div', { className:'flex justify-center gap-1 mb-2' }, flagBtns),
-      // HEADER
       e('div', { className:'bg-yellow-400 border-4 border-black p-2 mb-2 text-center' },
-        e('h1', { className:'text-3xl sm:text-4xl md:text-5xl text-red-600 leading-none', style:{...block,letterSpacing:'0.15em'} }, 'HCM ALE TRAIL'),
-        e('p', { className:'text-xs text-red-700 mt-2 px-2', style:{fontFamily:'sans-serif', fontWeight:'normal', textTransform:'none', letterSpacing:'normal'} }, t.welcome)
+        e('h1', { className:'text-3xl sm:text-4xl md:text-5xl text-red-600 leading-none', style:{...block,letterSpacing:'2px'} }, 'HCM ALE TRAIL'),
+        e('p', { className:'text-xs text-red-700 mt-2 px-2 leading-relaxed', style:{fontFamily:'sans-serif', fontWeight:'normal', textTransform:'none', letterSpacing:'0.3px'} }, t.welcome)
       ),
-      // STAMPS COUNTER
       e('div', { className:'bg-black border-4 border-yellow-400 p-2 mb-2' },
         e('div', { className:'flex items-center justify-between' },
           e('span', { className:'text-2xl sm:text-3xl text-yellow-400', style:block }, t.stamps),
@@ -236,20 +283,16 @@ function App() {
           e('div', { className:'h-full bg-green-500 transition-all', style:{width:prog+'%'} })
         )
       ),
-      // BUTTONS ROW 1 - Same size
       e('div', { className:'grid grid-cols-3 gap-1 mb-1' },
         e('button', { onClick:()=>setShowFaq(true), className:'bg-yellow-400 text-red-600 py-2 text-lg border-4 border-black active:scale-95 transition-all', style:block }, t.faq),
         e('a', { href:links.website, target:'_blank', rel:'noopener noreferrer', className:'bg-black text-yellow-400 py-2 text-lg border-4 border-yellow-400 active:scale-95 transition-all text-center flex items-center justify-center', style:block }, t.web),
         e('a', { href:links.maps, target:'_blank', rel:'noopener noreferrer', className:'bg-green-600 text-white py-2 text-lg border-4 border-black active:scale-95 transition-all text-center flex items-center justify-center', style:block }, t.maps)
       ),
-      // BUTTONS ROW 2 - Same size
       e('div', { className:'grid grid-cols-2 gap-1 mb-2' },
-        e('a', { href:links.ig, target:'_blank', rel:'noopener noreferrer', className:'bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white py-2 text-base border-4 border-black active:scale-95 transition-all text-center flex items-center justify-center gap-1', style:block }, e(Instagram,{size:20}), 'INSTAGRAM'),
-        e('a', { href:links.msg, target:'_blank', rel:'noopener noreferrer', className:'bg-blue-500 text-white py-2 text-base border-4 border-black active:scale-95 transition-all text-center flex items-center justify-center gap-1', style:block }, e(Messenger,{size:20}), 'MESSENGER')
+        e('a', { href:links.ig, target:'_blank', rel:'noopener noreferrer', className:'bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white py-2 text-sm border-4 border-black active:scale-95 transition-all text-center flex items-center justify-center gap-1', style:block }, e(Instagram,{size:18}), 'INSTAGRAM'),
+        e('a', { href:links.msg, target:'_blank', rel:'noopener noreferrer', className:'bg-blue-500 text-white py-2 text-sm border-4 border-black active:scale-95 transition-all text-center flex items-center justify-center gap-1', style:block }, e(Messenger,{size:18}), 'MESSENGER')
       ),
-      // BREWERY LIST
       e('div', { className:'space-y-1' }, breweryList),
-      // FOOTER
       e('div', { className:'mt-2 text-center' }, e('p',{className:'text-lg text-yellow-400',style:block},t.copy))
     ),
     faqModal,
