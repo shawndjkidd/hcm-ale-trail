@@ -8,18 +8,19 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { -webkit-tap-highlight-color: transparent; }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         body { margin: 0; padding: 0; background-color: #dc2626; }
+        html, body { overflow-x: hidden; }
     </style>
 </head>
 <body>
     <div id="root"></div>
     <script>
 const e = React.createElement;
-const { useState } = React;
+const { useState, useEffect } = React;
 
 const block = { fontFamily: 'Impact, Haettenschweiler, "Arial Black", sans-serif', fontWeight: 900, letterSpacing: '-1px', textTransform: 'uppercase' };
-const breweryBlock = { ...block, letterSpacing: '-2px', lineHeight: '0.85' };
+const breweryBlock = { ...block, letterSpacing: '-2px', lineHeight: '0.9' };
 
 const Instagram = ({size=24}) => e('svg', {width:size,height:size,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"2",strokeLinecap:"round",strokeLinejoin:"round"}, e('rect',{x:"2",y:"2",width:"20",height:"20",rx:"5",ry:"5"}), e('path',{d:"M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"}), e('line',{x1:"17.5",y1:"6.5",x2:"17.51",y2:"6.5"}));
 const Facebook = ({size=24}) => e('svg', {width:size,height:size,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"2",strokeLinecap:"round",strokeLinejoin:"round"}, e('path',{d:"M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"}));
@@ -27,7 +28,9 @@ const Messenger = ({size=24}) => e('svg', {width:size,height:size,viewBox:"0 0 2
 const Copy = ({size=24}) => e('svg', {width:size,height:size,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"2",strokeLinecap:"round",strokeLinejoin:"round"}, e('rect',{x:"9",y:"9",width:"13",height:"13",rx:"2",ry:"2"}), e('path',{d:"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"}));
 
 function App() {
-  const [stamps, setStamps] = useState([]);
+  const [stamps, setStamps] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('aletrail_stamps')) || []; } catch { return []; }
+  });
   const [selected, setSelected] = useState(null);
   const [lang, setLang] = useState('en');
   const [code, setCode] = useState('');
@@ -35,15 +38,37 @@ function App() {
   const [showFaq, setShowFaq] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [autoStamped, setAutoStamped] = useState(false);
+
+  // Save stamps to localStorage
+  useEffect(() => {
+    localStorage.setItem('aletrail_stamps', JSON.stringify(stamps));
+  }, [stamps]);
+
+  // Check URL for QR code auto-stamp
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const stampId = parseInt(params.get('stamp'));
+    const stampCode = params.get('code');
+    if (stampId && stampCode && codes[stampId] === stampCode.toUpperCase()) {
+      if (!stamps.includes(stampId)) {
+        setStamps(prev => [...prev, stampId]);
+        setAutoStamped(true);
+        const b = breweries.find(x => x.id === stampId);
+        if (b) setSelected(b);
+      }
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
 
   const links = { website: 'https://www.hochiminhaletrail.com/', maps: 'https://www.google.com/maps/d/u/1/viewer?usp=sharing&mid=1ZO-30TD2syibuwwqGF7wDxwHACOEsBQ', ig: 'https://www.instagram.com/hcm.aletrail/', msg: 'https://www.messenger.com/login.php?next=https%3A%2F%2Fwww.messenger.com%2Ft%2F115480196509607%2F' };
   const codes = { 1:'BIACRAFT2024', 2:'DARKNESS2024', 3:'DEME2024', 4:'STEERSMAN2024', 5:'EASTWEST2024', 6:'ROOSTER2024', 7:'BRIDGES2024', 8:'BELGO2024' };
   
   const txt = {
-    en: { stamps:"STAMPS", done:"DONE!", go:"GO!", code:"CODE", web:"WEBSITE", maps:"GOOGLE MAPS", faq:"FAQ", how:"HOW TO PLAY", s1:"GO TO ANY BREWERY", s2:"BUY BEER & GET:", s2a:"QR CODE", s2b:"OR SECRET CODE", s3:"GET STAMP!", s4:"8 STAMPS = FREE HAT!", rush:"NO RUSH!", scan:"SCAN QR", ask:"ASK FOR QR!", ok:"OK!", nope:"NOPE!", copy:"© 2024 HCM ALE TRAIL", copyTag:"COPY TAGS", copied:"COPIED!" },
-    vi: { stamps:"TEM", done:"XONG!", go:"OK!", code:"MÃ", web:"WEBSITE", maps:"GOOGLE MAPS", faq:"FAQ", how:"CÁCH CHƠI", s1:"ĐẾN QUÁN BIA", s2:"MUA BIA & LẤY:", s2a:"MÃ QR", s2b:"HOẶC MÃ SỐ", s3:"NHẬN TEM!", s4:"8 TEM = MŨ FREE!", rush:"TỪ TỪ!", scan:"QUÉT QR", ask:"HỎI MÃ QR!", ok:"OK!", nope:"SAI!", copy:"© 2024 ALE TRAIL", copyTag:"COPY TAGS", copied:"COPIED!" },
-    ko: { stamps:"스탬프", done:"완료!", go:"확인!", code:"코드", web:"WEBSITE", maps:"GOOGLE MAPS", faq:"FAQ", how:"방법", s1:"양조장 방문", s2:"맥주 & 받기:", s2a:"QR 코드", s2b:"또는 비밀코드", s3:"스탬프!", s4:"8개 = 무료모자!", rush:"천천히!", scan:"QR스캔", ask:"QR 요청!", ok:"OK!", nope:"오류!", copy:"© 2024 HCM", copyTag:"COPY", copied:"OK!" },
-    ja: { stamps:"スタンプ", done:"完了!", go:"OK!", code:"コード", web:"WEBSITE", maps:"GOOGLE MAPS", faq:"FAQ", how:"遊び方", s1:"醸造所へ行く", s2:"ビール買って:", s2a:"QRコード", s2b:"または秘密コード", s3:"スタンプ!", s4:"8個=無料帽子!", rush:"ゆっくり!", scan:"QRスキャン", ask:"QR聞いて!", ok:"OK!", nope:"違う!", copy:"© 2024 HCM", copyTag:"COPY", copied:"OK!" }
+    en: { stamps:"STAMPS", done:"DONE!", go:"GO!", code:"CODE", web:"WEBSITE", maps:"MAPS", faq:"FAQ", how:"HOW TO PLAY", s1:"GO TO ANY BREWERY", s2:"BUY BEER & GET:", s2a:"QR CODE", s2b:"OR SECRET CODE", s3:"GET STAMP!", s4:"8 STAMPS = FREE HAT!", rush:"NO RUSH!", scan:"SCAN QR", ask:"ASK FOR QR!", ok:"OK!", nope:"NOPE!", copy:"© 2024 HCM ALE TRAIL", copyTag:"COPY TAGS", copied:"COPIED!", welcome:"Welcome to the HCM Ale Trail! Visit 8 awesome taprooms across Saigon. Buy a drink, collect a stamp, and get a free Ale Trail hat at your last stop! No deadline — do it in a day or a year." },
+    vi: { stamps:"TEM", done:"XONG!", go:"OK!", code:"MÃ", web:"WEBSITE", maps:"MAPS", faq:"FAQ", how:"CÁCH CHƠI", s1:"ĐẾN QUÁN BIA", s2:"MUA BIA & LẤY:", s2a:"MÃ QR", s2b:"HOẶC MÃ SỐ", s3:"NHẬN TEM!", s4:"8 TEM = MŨ FREE!", rush:"TỪ TỪ!", scan:"QUÉT QR", ask:"HỎI MÃ QR!", ok:"OK!", nope:"SAI!", copy:"© 2024 ALE TRAIL", copyTag:"COPY TAGS", copied:"COPIED!", welcome:"Chào mừng đến HCM Ale Trail! Ghé 8 quán bia thủ công ở Sài Gòn. Mua bia, lấy tem, đổi mũ miễn phí! Không giới hạn thời gian." },
+    ko: { stamps:"스탬프", done:"완료!", go:"확인!", code:"코드", web:"WEBSITE", maps:"MAPS", faq:"FAQ", how:"방법", s1:"양조장 방문", s2:"맥주 & 받기:", s2a:"QR 코드", s2b:"또는 비밀코드", s3:"스탬프!", s4:"8개 = 무료모자!", rush:"천천히!", scan:"QR스캔", ask:"QR 요청!", ok:"OK!", nope:"오류!", copy:"© 2024 HCM", copyTag:"COPY", copied:"OK!", welcome:"HCM Ale Trail에 오신 것을 환영합니다! 사이공의 8개 탭룸을 방문하세요." },
+    ja: { stamps:"スタンプ", done:"完了!", go:"OK!", code:"コード", web:"WEBSITE", maps:"MAPS", faq:"FAQ", how:"遊び方", s1:"醸造所へ行く", s2:"ビール買って:", s2a:"QRコード", s2b:"または秘密コード", s3:"スタンプ!", s4:"8個=無料帽子!", rush:"ゆっくり!", scan:"QRスキャン", ask:"QR聞いて!", ok:"OK!", nope:"違う!", copy:"© 2024 HCM", copyTag:"COPY", copied:"OK!", welcome:"HCM Ale Trailへようこそ！サイゴンの8つのタップルームを訪れてください。" }
   };
   const t = txt[lang];
 
@@ -55,19 +80,19 @@ function App() {
   ];
 
   const breweries = [
-    { id:1, name:"BIACRAFT", dist:"District 3", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdK7Ckh29Bn9ivYjVNAlJWTyN9PslADW92zaCphCTvvddAEnCSxi_dlY2iMY5clflVN1yXCMdbq2AVVO_ioqKx1dnw5DeOEkBnV7Eo_atNA8_YYr8gV2anEALnH7Ci0AlV710hBPf3vOEYmT0FhYOf2ZbiUKS-NfsOPf6Sy1f_x1Ncn8Odmv0Ec=w1280", ig:"https://www.instagram.com/biacraftartisanales/", fb:"https://facebook.com/biacraft", tags:"#hcmaletrail @biacraftartisanales" },
-    { id:2, name:"HEART OF DARKNESS", dist:"District 1", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdDal3ZRQ0-YCuLFCERn5sfV3zjleSH-50uCOFbQgeLBNGoWqluNGNfh7zAtFCQkeLbZ642_ay83YPNhpIWc-kq_u2_tg_rI-Kmwc45_-x5YQ3HPghm0_HD1eQPF4UknWmK61Q2Dzql4maOKWwZtO-x3a5d6Ahhn7pr625DX0NJpERvWB2q_BgY_Co=w1280", ig:"https://instagram.com/heartofdarknessbrewery", fb:"https://facebook.com/HeartOfDarknessBrewery", tags:"#hcmaletrail @heartofdarknessbrewery" },
-    { id:3, name:"DEME", dist:"District 3", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdZ2wqJkHlpA-r3oUWGRR8ORdu_ZlMxIfm-LR00eo0HxUB7QJvH4H1rqOOAY9iEpmm8YGkJdEpGUCRR5K8juFwsqZ1K6Ptuyptn1wsMRYfDqqzuRFB2nFwUJlmcITxc_w9dBpJOZOzO2AIEUHZq2f8Fwb3cRv3A6aFONpvCKwWt3Nk2-DmEMZOsytQ=w1280", ig:"https://instagram.com/demebrewing", fb:"https://facebook.com/demebrewing", tags:"#hcmaletrail @demebrewing" },
-    { id:4, name:"STEERSMAN", dist:"Tan Binh", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkf7k0Vs-ZyX2tCPnel531ZobxtdWA4bFdDXolqBsigbrB1eciN4oWcTTMcmD-T6CEtPnt3fvmxunZpSQczX32LOepHUUDpiEalgMsVhtotX7dTo2CBcIXr4MYuk4nv92VXLgbX2exbNIv32gHTtHOKWGfuS9p3PbW6qZ-3W4HNc7XNF_MeA3PlMvKY=w1280", ig:"https://instagram.com/steersmanbrewery", fb:"https://facebook.com/steersmanbrewery", tags:"#hcmaletrail @steersmanbrewery" },
-    { id:5, name:"EAST WEST", dist:"District 1", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdkQ7DIUeqpmOGC1jjZ_guFx6ZZeAPL6bCZIYy2l2KRybNHviagKuZXZnqCYeJw7XKkT5RDTIzL0UoQUZmTQ1BJRcGM5WQ0GGi_arfGg7gZQanAyysq_sMotaymA5kG61trRNhhKA0l_uXEY1kDlClBENoNON17ZAhXC8VKBVGd-tmSBA0Fas5AM88=w1280", ig:"https://instagram.com/eastwestbrewing", fb:"https://facebook.com/eastwestbrewery", tags:"#hcmaletrail @eastwestbrewing" },
-    { id:6, name:"ROOSTER", dist:"District 1", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCke6ZXB89vvBUEWhAOaAA9G1lC4_MsvZ4b8Hx_Q-r9FQnyKW0HjV5m9ggg9ZU6byWxtbx5x8uyBsv8r9j97jozow6nl9uZoiz8C_OHFWDSkcf2SRsFzQ09UbdrdfA-4cKvarEr4wUUm-58iZm04vrIkqPo1B-wmO6MobivQvMy9gK3evra6oybGaSlA=w1280", ig:"https://instagram.com/roosterbeers", fb:"https://facebook.com/roosterbeers", tags:"#hcmaletrail @roosterbeers" },
-    { id:7, name:"7 BRIDGES", dist:"District 1", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkcaFLgzmPjSp2MEKO6vUSgAReQHE8f8VYbxeJd0ph-o8l_mOOPaKoJluvOvTDS9ytC0N1_3g2kpvKiL88O9gA_Vm2ZsIYWfl9fSKEBdx_xVHzDQGcqiuq5zFZ-IH_ADMqofO7EwfZhHXF2SxEjZkru9kYZoL82dzFPhgGxyFyv1Qep47qzouNGlAjg=w1280", ig:"https://instagram.com/7bridgesbrewing", fb:"https://facebook.com/7BridgesBrewingCo", tags:"#hcmaletrail @7bridgesbrewing" },
-    { id:8, name:"BELGO", dist:"District 1", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkfpeHaQ7DOVCrkiTbALlX3kjWHlMcO8ilBlxeVBC6rWBubr_YJ1izhjGGbyS92pyLDX0UXhbQfykzCWltoAnDvoGtLLhT63Lyww_2j3QwONC-LJhGDg4PemxOaqF8xwOtKGiBmdTWfLVPc8ihdNaXFDED_4CA85c6bbWlGhENPpExnslVEkH3F-aCk=w1280", ig:"https://instagram.com/belgosaigon", fb:"https://facebook.com/belgosaigon", tags:"#hcmaletrail @belgosaigon" }
+    { id:1, name:"BIACRAFT", dist:"District 3", addr:"📍 1 Le Ngo Cat, District 3", tagline:"Funky names, creative food, and the OG craft beer hangout.", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdK7Ckh29Bn9ivYjVNAlJWTyN9PslADW92zaCphCTvvddAEnCSxi_dlY2iMY5clflVN1yXCMdbq2AVVO_ioqKx1dnw5DeOEkBnV7Eo_atNA8_YYr8gV2anEALnH7Ci0AlV710hBPf3vOEYmT0FhYOf2ZbiUKS-NfsOPf6Sy1f_x1Ncn8Odmv0Ec=w1280", ig:"https://www.instagram.com/biacraftartisanales/", fb:"https://facebook.com/biacraft", tags:"#hcmaletrail @biacraftartisanales" },
+    { id:2, name:"HEART OF DARKNESS", dist:"District 1", addr:"📍 31D Ly Tu Trong, District 1", tagline:"Bold beers, bold branding. Known for IPAs, stouts, and indie taproom vibe.", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdDal3ZRQ0-YCuLFCERn5sfV3zjleSH-50uCOFbQgeLBNGoWqluNGNfh7zAtFCQkeLbZ642_ay83YPNhpIWc-kq_u2_tg_rI-Kmwc45_-x5YQ3HPghm0_HD1eQPF4UknWmK61Q2Dzql4maOKWwZtO-x3a5d6Ahhn7pr625DX0NJpERvWB2q_BgY_Co=w1280", ig:"https://instagram.com/heartofdarknessbrewery", fb:"https://facebook.com/HeartOfDarknessBrewery", tags:"#hcmaletrail @heartofdarknessbrewery" },
+    { id:3, name:"DEME", dist:"District 3", addr:"📍 201B Nam Ky Khoi Nghia, District 3", tagline:"Underground feel with clean, small-batch brews. A local hidden gem.", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdZ2wqJkHlpA-r3oUWGRR8ORdu_ZlMxIfm-LR00eo0HxUB7QJvH4H1rqOOAY9iEpmm8YGkJdEpGUCRR5K8juFwsqZ1K6Ptuyptn1wsMRYfDqqzuRFB2nFwUJlmcITxc_w9dBpJOZOzO2AIEUHZq2f8Fwb3cRv3A6aFONpvCKwWt3Nk2-DmEMZOsytQ=w1280", ig:"https://instagram.com/demebrewing", fb:"https://facebook.com/demebrewing", tags:"#hcmaletrail @demebrewing" },
+    { id:4, name:"STEERSMAN", dist:"Tan Binh", addr:"📍 18B Cong Hoa, Tan Binh", tagline:"Approachable beers and chill vibes. Great for groups and newcomers.", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkf7k0Vs-ZyX2tCPnel531ZobxtdWA4bFdDXolqBsigbrB1eciN4oWcTTMcmD-T6CEtPnt3fvmxunZpSQczX32LOepHUUDpiEalgMsVhtotX7dTo2CBcIXr4MYuk4nv92VXLgbX2exbNIv32gHTtHOKWGfuS9p3PbW6qZ-3W4HNc7XNF_MeA3PlMvKY=w1280", ig:"https://instagram.com/steersmanbrewery", fb:"https://facebook.com/steersmanbrewery", tags:"#hcmaletrail @steersmanbrewery" },
+    { id:5, name:"EAST WEST", dist:"District 1", addr:"📍 181-185 Ly Tu Trong, District 1", tagline:"Sleek brewhouse with bold beers, food, and rooftop. Award-winning!", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkdkQ7DIUeqpmOGC1jjZ_guFx6ZZeAPL6bCZIYy2l2KRybNHviagKuZXZnqCYeJw7XKkT5RDTIzL0UoQUZmTQ1BJRcGM5WQ0GGi_arfGg7gZQanAyysq_sMotaymA5kG61trRNhhKA0l_uXEY1kDlClBENoNON17ZAhXC8VKBVGd-tmSBA0Fas5AM88=w1280", ig:"https://instagram.com/eastwestbrewing", fb:"https://facebook.com/eastwestbrewery", tags:"#hcmaletrail @eastwestbrewing" },
+    { id:6, name:"ROOSTER", dist:"District 1", addr:"📍 31 Ho Huan Nghiep, District 1", tagline:"Casual and affordable with clean styles. Great for local vibes.", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCke6ZXB89vvBUEWhAOaAA9G1lC4_MsvZ4b8Hx_Q-r9FQnyKW0HjV5m9ggg9ZU6byWxtbx5x8uyBsv8r9j97jozow6nl9uZoiz8C_OHFWDSkcf2SRsFzQ09UbdrdfA-4cKvarEr4wUUm-58iZm04vrIkqPo1B-wmO6MobivQvMy9gK3evra6oybGaSlA=w1280", ig:"https://instagram.com/roosterbeers", fb:"https://facebook.com/roosterbeers", tags:"#hcmaletrail @roosterbeers" },
+    { id:7, name:"7 BRIDGES", dist:"District 1", addr:"📍 25 Ly Tu Trong, District 1", tagline:"Born in Da Nang, focused on sustainability. Always something new!", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkcaFLgzmPjSp2MEKO6vUSgAReQHE8f8VYbxeJd0ph-o8l_mOOPaKoJluvOvTDS9ytC0N1_3g2kpvKiL88O9gA_Vm2ZsIYWfl9fSKEBdx_xVHzDQGcqiuq5zFZ-IH_ADMqofO7EwfZhHXF2SxEjZkru9kYZoL82dzFPhgGxyFyv1Qep47qzouNGlAjg=w1280", ig:"https://instagram.com/7bridgesbrewing", fb:"https://facebook.com/7BridgesBrewingCo", tags:"#hcmaletrail @7bridgesbrewing" },
+    { id:8, name:"BELGO", dist:"District 1", addr:"📍 159A Nguyen Van Thu, District 1", tagline:"Rich Belgian-style beers in a medieval space. Perfect for big pours.", logo:"https://lh3.googleusercontent.com/sitesv/AAzXCkfpeHaQ7DOVCrkiTbALlX3kjWHlMcO8ilBlxeVBC6rWBubr_YJ1izhjGGbyS92pyLDX0UXhbQfykzCWltoAnDvoGtLLhT63Lyww_2j3QwONC-LJhGDg4PemxOaqF8xwOtKGiBmdTWfLVPc8ihdNaXFDED_4CA85c6bbWlGhENPpExnslVEkH3F-aCk=w1280", ig:"https://instagram.com/belgosaigon", fb:"https://facebook.com/belgosaigon", tags:"#hcmaletrail @belgosaigon" }
   ];
 
   const validate = () => {
     if (codes[selected.id] === code.toUpperCase().trim()) {
-      setStamps([...stamps, selected.id]);
+      setStamps(prev => [...prev, selected.id]);
       setCode(''); setError(''); setSelected(null);
     } else setError(t.nope);
   };
@@ -83,7 +108,7 @@ function App() {
 
   // FLAGS
   const flagBtns = flags.map(f => 
-    e('button', { key:f.c, onClick:()=>setLang(f.c), className:`${lang===f.c?'ring-4 ring-yellow-400 scale-110':'opacity-50'} w-20 h-12 border-4 border-black overflow-hidden transition-all hover:scale-110` },
+    e('button', { key:f.c, onClick:()=>setLang(f.c), className:`${lang===f.c?'ring-4 ring-yellow-400 scale-110':'opacity-50'} w-16 h-10 border-2 border-black overflow-hidden transition-all` },
       e('img', { src:f.f, className:'w-full h-full object-cover' })
     )
   );
@@ -91,20 +116,20 @@ function App() {
   // BREWERY LIST
   const breweryList = breweries.map(b => {
     const has = stamps.includes(b.id);
-    return e('div', { key:b.id, onClick:()=>setSelected(b), className:`${has?'bg-yellow-400':'bg-white'} border-8 border-black cursor-pointer active:scale-[0.98] transition-all` },
-      e('div', { className:'flex items-center h-32' },
-        e('div', { className:`${has?'bg-green-600':'bg-red-600'} w-24 h-full flex items-center justify-center flex-shrink-0` },
-          e('span', { className:'text-6xl text-yellow-400', style:block }, b.id)
+    return e('div', { key:b.id, onClick:()=>setSelected(b), className:`${has?'bg-yellow-400':'bg-white'} border-4 border-black cursor-pointer active:scale-[0.98] transition-all` },
+      e('div', { className:'flex items-center h-24' },
+        e('div', { className:`${has?'bg-green-600':'bg-red-600'} w-16 h-full flex items-center justify-center flex-shrink-0` },
+          e('span', { className:'text-4xl text-yellow-400', style:block }, b.id)
         ),
-        e('div', { className:'flex-1 px-3 py-1 flex flex-col justify-center overflow-hidden' },
-          e('h3', { className:'text-5xl md:text-6xl text-red-600', style:breweryBlock }, b.name),
-          e('p', { className:'text-xl md:text-2xl text-red-500 -mt-1', style:block }, b.dist)
+        e('div', { className:'flex-1 px-2 py-1 flex flex-col justify-center min-w-0' },
+          e('h3', { className:'text-2xl sm:text-3xl md:text-4xl text-red-600 truncate', style:breweryBlock }, b.name),
+          e('p', { className:'text-sm sm:text-base text-red-500', style:block }, b.dist)
         ),
-        e('div', { className:'w-32 h-full flex items-center justify-center border-l-8 border-black border-dashed flex-shrink-0 p-1' },
-          e('div', { className:`w-28 h-28 rounded-full overflow-hidden border-4 ${has?'border-green-500':'border-gray-300'} bg-white flex items-center justify-center relative` },
-            e('img', { src:b.logo, className:`w-full h-full object-cover ${has?'':'opacity-40 grayscale'}` }),
-            has && e('div', { className:'absolute bottom-0 right-0 bg-green-500 rounded-full w-8 h-8 flex items-center justify-center border-2 border-white' },
-              e('span', { className:'text-white text-lg font-bold' }, '✓')
+        e('div', { className:'w-20 h-full flex items-center justify-center border-l-4 border-black border-dashed flex-shrink-0 p-1' },
+          e('div', { className:`w-16 h-16 rounded-full overflow-hidden border-2 ${has?'border-green-500':'border-gray-300'} bg-white flex items-center justify-center relative` },
+            e('img', { src:b.logo, className:`w-full h-full object-cover ${has?'':'opacity-40 grayscale'}`, onError:(ev)=>{ev.target.style.display='none';} }),
+            has && e('div', { className:'absolute bottom-0 right-0 bg-green-500 rounded-full w-5 h-5 flex items-center justify-center border border-white' },
+              e('span', { className:'text-white text-xs font-bold' }, '✓')
             )
           )
         )
@@ -113,101 +138,119 @@ function App() {
   });
 
   // FAQ MODAL
-  const faqModal = showFaq && e('div', { className:'fixed inset-0 bg-black z-50 flex items-center justify-center p-2' },
-    e('div', { className:'bg-yellow-400 max-w-md w-full border-8 border-black relative' },
-      e('button', { onClick:()=>setShowFaq(false), className:'absolute -top-6 -right-6 bg-red-600 text-yellow-400 w-16 h-16 flex items-center justify-center border-8 border-black text-4xl', style:block }, 'X'),
-      e('div', { className:'p-4' },
-        e('h2', { className:'text-5xl text-center text-red-600 mb-4', style:block }, t.how),
+  const faqModal = showFaq && e('div', { className:'fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4' },
+    e('div', { className:'bg-yellow-400 w-full max-w-sm border-4 border-black relative' },
+      e('button', { onClick:()=>setShowFaq(false), className:'absolute top-2 right-2 bg-red-600 text-yellow-400 w-10 h-10 flex items-center justify-center border-4 border-black text-2xl z-10', style:block }, 'X'),
+      e('div', { className:'p-3 pt-10' },
+        e('h2', { className:'text-3xl text-center text-red-600 mb-3', style:block }, t.how),
         e('div', { className:'space-y-2' },
-          e('div', { className:'bg-red-600 border-4 border-black p-3 flex items-center gap-3' }, e('span',{className:'text-5xl text-yellow-400 w-16',style:block},'1'), e('span',{className:'text-2xl text-yellow-400 flex-1',style:block},t.s1)),
-          e('div', { className:'bg-red-600 border-4 border-black p-3 flex items-center gap-3' }, e('span',{className:'text-5xl text-yellow-400 w-16',style:block},'2'), e('div',{className:'flex-1'}, e('span',{className:'text-2xl text-yellow-400 block',style:block},t.s2), e('span',{className:'text-xl text-yellow-300',style:block},t.s2a+' / '+t.s2b))),
-          e('div', { className:'bg-red-600 border-4 border-black p-3 flex items-center gap-3' }, e('span',{className:'text-5xl text-yellow-400 w-16',style:block},'3'), e('span',{className:'text-2xl text-yellow-400 flex-1',style:block},t.s3)),
-          e('div', { className:'bg-green-600 border-4 border-black p-3 flex items-center gap-3' }, e('span',{className:'text-5xl text-white w-16',style:block},'4'), e('span',{className:'text-2xl text-white flex-1',style:block},t.s4))
+          e('div', { className:'bg-red-600 border-2 border-black p-2 flex items-center gap-2' }, e('span',{className:'text-3xl text-yellow-400 w-10',style:block},'1'), e('span',{className:'text-lg text-yellow-400 flex-1',style:block},t.s1)),
+          e('div', { className:'bg-red-600 border-2 border-black p-2 flex items-center gap-2' }, e('span',{className:'text-3xl text-yellow-400 w-10',style:block},'2'), e('div',{className:'flex-1'}, e('span',{className:'text-lg text-yellow-400 block',style:block},t.s2), e('span',{className:'text-sm text-yellow-300',style:block},t.s2a+' / '+t.s2b))),
+          e('div', { className:'bg-red-600 border-2 border-black p-2 flex items-center gap-2' }, e('span',{className:'text-3xl text-yellow-400 w-10',style:block},'3'), e('span',{className:'text-lg text-yellow-400 flex-1',style:block},t.s3)),
+          e('div', { className:'bg-green-600 border-2 border-black p-2 flex items-center gap-2' }, e('span',{className:'text-3xl text-white w-10',style:block},'4'), e('span',{className:'text-lg text-white flex-1',style:block},t.s4))
         ),
-        e('div', { className:'bg-black border-4 border-yellow-400 p-3 mt-3' }, e('p',{className:'text-3xl text-yellow-400 text-center',style:block},t.rush)),
-        e('button', { onClick:()=>setShowFaq(false), className:'w-full bg-red-600 text-yellow-400 py-5 mt-3 text-5xl border-8 border-black', style:block }, t.ok)
+        e('div', { className:'bg-black border-2 border-yellow-400 p-2 mt-2' }, e('p',{className:'text-xl text-yellow-400 text-center',style:block},t.rush)),
+        e('button', { onClick:()=>setShowFaq(false), className:'w-full bg-red-600 text-yellow-400 py-3 mt-2 text-3xl border-4 border-black', style:block }, t.ok)
       )
     )
   );
 
   // QR MODAL
-  const qrModal = showQR && e('div', { className:'fixed inset-0 bg-black z-50 flex items-center justify-center p-2' },
-    e('div', { className:'bg-yellow-400 max-w-md w-full border-8 border-black relative' },
-      e('button', { onClick:()=>setShowQR(false), className:'absolute -top-6 -right-6 bg-red-600 text-yellow-400 w-16 h-16 flex items-center justify-center border-8 border-black text-4xl', style:block }, 'X'),
-      e('div', { className:'p-4' },
-        e('div', { className:'bg-white border-8 border-black p-6 mb-3 text-center' }, e('div',{className:'text-8xl'},'📱'), e('p',{className:'text-3xl text-black mt-2',style:block},t.ask)),
-        e('div', { className:'bg-red-600 border-4 border-black p-4 mb-3' },
-          e('p',{className:'text-2xl text-yellow-400',style:block},'• iPHONE → CAMERA'),
-          e('p',{className:'text-2xl text-yellow-400',style:block},'• ANDROID → LENS'),
-          e('p',{className:'text-2xl text-yellow-400',style:block},'• POINT → TAP → DONE!')
+  const qrModal = showQR && e('div', { className:'fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4' },
+    e('div', { className:'bg-yellow-400 w-full max-w-sm border-4 border-black relative' },
+      e('button', { onClick:()=>setShowQR(false), className:'absolute top-2 right-2 bg-red-600 text-yellow-400 w-10 h-10 flex items-center justify-center border-4 border-black text-2xl z-10', style:block }, 'X'),
+      e('div', { className:'p-3 pt-10' },
+        e('div', { className:'bg-white border-4 border-black p-4 mb-2 text-center' }, e('div',{className:'text-6xl'},'📱'), e('p',{className:'text-2xl text-black mt-2',style:block},t.ask)),
+        e('div', { className:'bg-red-600 border-2 border-black p-3 mb-2' },
+          e('p',{className:'text-lg text-yellow-400',style:block},'• iPHONE → CAMERA'),
+          e('p',{className:'text-lg text-yellow-400',style:block},'• ANDROID → LENS'),
+          e('p',{className:'text-lg text-yellow-400',style:block},'• POINT → TAP → DONE!')
         ),
-        e('button', { onClick:()=>setShowQR(false), className:'w-full bg-green-600 text-white py-6 text-5xl border-8 border-black', style:block }, t.ok)
+        e('button', { onClick:()=>setShowQR(false), className:'w-full bg-green-600 text-white py-4 text-3xl border-4 border-black', style:block }, t.ok)
       )
     )
   );
 
   // BREWERY MODAL
-  const breweryModal = selected && e('div', { className:'fixed inset-0 bg-black z-50 flex items-center justify-center p-2' },
-    e('div', { className:'bg-yellow-400 max-w-md w-full border-8 border-black relative max-h-[95vh] overflow-y-auto' },
-      e('button', { onClick:()=>{setSelected(null);setCode('');setError('');setCopied(false);}, className:'absolute -top-6 -right-6 bg-red-600 text-yellow-400 w-16 h-16 flex items-center justify-center border-8 border-black text-4xl z-10', style:block }, 'X'),
-      e('div', { className:'p-4' },
-        e('button', { onClick:()=>setShowQR(true), className:'w-full bg-white border-8 border-red-600 p-4 mb-3 active:scale-95 transition-all' },
-          e('div',{className:'text-7xl text-center'},'📱'),
-          e('p',{className:'text-3xl text-red-600 text-center',style:block},t.scan)
+  const breweryModal = selected && e('div', { className:'fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-2' },
+    e('div', { className:'bg-yellow-400 w-full max-w-sm border-4 border-black relative max-h-[90vh] overflow-y-auto' },
+      e('button', { onClick:()=>{setSelected(null);setCode('');setError('');setCopied(false);setAutoStamped(false);}, className:'absolute top-2 right-2 bg-red-600 text-yellow-400 w-10 h-10 flex items-center justify-center border-4 border-black text-2xl z-10', style:block }, 'X'),
+      e('div', { className:'p-3 pt-12' },
+        // Auto-stamped message
+        autoStamped && stamps.includes(selected.id) && e('div', { className:'bg-green-600 border-4 border-black p-3 mb-2 text-center' },
+          e('p', { className:'text-2xl text-white', style:block }, '🎉 STAMP COLLECTED!')
         ),
-        e('div', { className:'bg-red-600 border-8 border-black p-4 mb-3 text-center' },
-          e('h2',{className:'text-4xl md:text-5xl text-yellow-400 leading-none',style:breweryBlock},selected.name),
-          e('p',{className:'text-2xl text-yellow-300 mt-1',style:block},selected.dist)
+        // QR Button
+        e('button', { onClick:()=>setShowQR(true), className:'w-full bg-white border-4 border-red-600 p-3 mb-2 active:scale-95 transition-all' },
+          e('div',{className:'text-5xl text-center'},'📱'),
+          e('p',{className:'text-2xl text-red-600 text-center',style:block},t.scan)
         ),
-        e('div', { className:'flex gap-2 mb-3' },
-          e('a', { href:selected.ig, target:'_blank', rel:'noopener noreferrer', className:'flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 text-2xl border-4 border-black flex items-center justify-center gap-2 active:scale-95 transition-all', style:block }, e(Instagram,{size:28}), 'IG'),
-          e('a', { href:selected.fb, target:'_blank', rel:'noopener noreferrer', className:'flex-1 bg-blue-600 text-white py-4 text-2xl border-4 border-black flex items-center justify-center gap-2 active:scale-95 transition-all', style:block }, e(Facebook,{size:28}), 'FB')
+        // Name & Tagline
+        e('div', { className:'bg-red-600 border-4 border-black p-3 mb-2' },
+          e('h2',{className:'text-2xl sm:text-3xl text-yellow-400 text-center',style:breweryBlock},selected.name),
+          e('p',{className:'text-sm text-yellow-300 mt-1 text-center'},selected.addr),
+          e('p',{className:'text-xs text-yellow-200 mt-2 text-center italic'},selected.tagline)
         ),
-        e('div', { className:'bg-black border-4 border-yellow-400 p-3 mb-3' },
-          e('p',{className:'text-sm text-yellow-400 text-center mb-2 font-mono break-all'},selected.tags),
-          e('button', { onClick:()=>copyTags(selected.tags), className:`w-full ${copied?'bg-green-600 text-white':'bg-yellow-400 text-black'} py-3 text-2xl border-4 border-black flex items-center justify-center gap-2 active:scale-95 transition-all`, style:block }, e(Copy,{size:24}), copied?t.copied:t.copyTag)
+        // Social buttons
+        e('div', { className:'flex gap-2 mb-2' },
+          e('a', { href:selected.ig, target:'_blank', rel:'noopener noreferrer', className:'flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 text-xl border-2 border-black flex items-center justify-center gap-1 active:scale-95 transition-all', style:block }, e(Instagram,{size:20}), 'IG'),
+          e('a', { href:selected.fb, target:'_blank', rel:'noopener noreferrer', className:'flex-1 bg-blue-600 text-white py-3 text-xl border-2 border-black flex items-center justify-center gap-1 active:scale-95 transition-all', style:block }, e(Facebook,{size:20}), 'FB')
         ),
+        // Copy tags
+        e('div', { className:'bg-black border-2 border-yellow-400 p-2 mb-2' },
+          e('p',{className:'text-xs text-yellow-400 text-center mb-1 font-mono'},selected.tags),
+          e('button', { onClick:()=>copyTags(selected.tags), className:`w-full ${copied?'bg-green-600 text-white':'bg-yellow-400 text-black'} py-2 text-lg border-2 border-black flex items-center justify-center gap-1 active:scale-95 transition-all`, style:block }, e(Copy,{size:18}), copied?t.copied:t.copyTag)
+        ),
+        // Code entry or validated
         !stamps.includes(selected.id) ? 
           e('div', null,
-            e('p',{className:'text-3xl text-red-600 text-center mb-2',style:block},'— '+t.code+' —'),
-            e('input', { type:'password', value:code, onChange:ev=>{setCode(ev.target.value);setError('');}, onKeyPress:ev=>{if(ev.key==='Enter')validate();}, className:'w-full px-4 py-5 text-4xl text-center uppercase border-8 border-black mb-2 bg-black text-yellow-400', style:{...block,letterSpacing:'8px'}, placeholder:'****', maxLength:'20' }),
-            error && e('p',{className:'text-center text-3xl text-red-600 mb-2',style:block},'❌ '+error),
-            e('button', { onClick:validate, className:'w-full bg-green-600 text-white py-6 text-5xl border-8 border-black active:scale-95 transition-all', style:block }, t.go)
+            e('p',{className:'text-2xl text-red-600 text-center mb-1',style:block},'— '+t.code+' —'),
+            e('input', { type:'password', value:code, onChange:ev=>{setCode(ev.target.value);setError('');}, onKeyPress:ev=>{if(ev.key==='Enter')validate();}, className:'w-full px-3 py-3 text-2xl text-center uppercase border-4 border-black mb-1 bg-black text-yellow-400', style:{...block,letterSpacing:'6px'}, placeholder:'****', maxLength:'20' }),
+            error && e('p',{className:'text-center text-xl text-red-600 mb-1',style:block},'❌ '+error),
+            e('button', { onClick:validate, className:'w-full bg-green-600 text-white py-4 text-3xl border-4 border-black active:scale-95 transition-all', style:block }, t.go)
           ) :
-          e('div', { className:'bg-green-600 border-8 border-black p-6 text-center' },
-            e('div',{className:'w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-white bg-white mb-2'},e('img',{src:selected.logo,className:'w-full h-full object-cover'})),
-            e('p',{className:'text-5xl text-white',style:block},t.done)
+          e('div', { className:'bg-green-600 border-4 border-black p-4 text-center' },
+            e('div',{className:'w-20 h-20 mx-auto rounded-full overflow-hidden border-2 border-white bg-white mb-2'},e('img',{src:selected.logo,className:'w-full h-full object-cover'})),
+            e('p',{className:'text-3xl text-white',style:block},t.done)
           )
       )
     )
   );
 
   return e('div', { className:'min-h-screen bg-red-600 p-2' },
-    e('div', { className:'max-w-2xl mx-auto' },
-      e('div', { className:'flex justify-center gap-2 mb-2' }, flagBtns),
-      e('div', { className:'bg-yellow-400 border-8 border-black p-3 mb-2 text-center overflow-hidden' },
-        e('h1', { className:'text-5xl md:text-6xl text-red-600 leading-none whitespace-nowrap', style:{...block,letterSpacing:'0.3em',transform:'scaleX(1.05)'} }, 'HCM ALE TRAIL')
+    e('div', { className:'max-w-md mx-auto' },
+      // FLAGS
+      e('div', { className:'flex justify-center gap-1 mb-2' }, flagBtns),
+      // HEADER
+      e('div', { className:'bg-yellow-400 border-4 border-black p-2 mb-2 text-center' },
+        e('h1', { className:'text-3xl sm:text-4xl md:text-5xl text-red-600 leading-none', style:{...block,letterSpacing:'0.15em'} }, 'HCM ALE TRAIL'),
+        e('p', { className:'text-xs text-red-700 mt-2 px-2', style:{fontFamily:'sans-serif', fontWeight:'normal', textTransform:'none', letterSpacing:'normal'} }, t.welcome)
       ),
-      e('div', { className:'bg-black border-8 border-yellow-400 p-2 mb-2' },
+      // STAMPS COUNTER
+      e('div', { className:'bg-black border-4 border-yellow-400 p-2 mb-2' },
         e('div', { className:'flex items-center justify-between' },
-          e('span', { className:'text-4xl md:text-5xl text-yellow-400', style:block }, t.stamps),
-          e('span', { className:'text-5xl md:text-6xl text-yellow-400', style:block }, stamps.length+'/8')
+          e('span', { className:'text-2xl sm:text-3xl text-yellow-400', style:block }, t.stamps),
+          e('span', { className:'text-3xl sm:text-4xl text-yellow-400', style:block }, stamps.length+'/8')
         ),
-        e('div', { className:'h-4 bg-red-900 border-2 border-yellow-400 mt-2' },
+        e('div', { className:'h-3 bg-red-900 border border-yellow-400 mt-1' },
           e('div', { className:'h-full bg-green-500 transition-all', style:{width:prog+'%'} })
         )
       ),
-      e('div', { className:'flex gap-2 mb-2' },
-        e('button', { onClick:()=>setShowFaq(true), className:'w-20 bg-yellow-400 text-red-600 py-3 text-2xl border-8 border-black active:scale-95 transition-all', style:block }, t.faq),
-        e('a', { href:links.website, target:'_blank', rel:'noopener noreferrer', className:'flex-1 bg-black text-yellow-400 py-3 text-xl md:text-2xl border-8 border-yellow-400 active:scale-95 transition-all text-center flex items-center justify-center', style:block }, t.web),
-        e('a', { href:links.maps, target:'_blank', rel:'noopener noreferrer', className:'flex-1 bg-green-600 text-white py-3 text-xl md:text-2xl border-8 border-black active:scale-95 transition-all text-center flex items-center justify-center', style:block }, t.maps)
+      // BUTTONS ROW 1 - Same size
+      e('div', { className:'grid grid-cols-3 gap-1 mb-1' },
+        e('button', { onClick:()=>setShowFaq(true), className:'bg-yellow-400 text-red-600 py-2 text-lg border-4 border-black active:scale-95 transition-all', style:block }, t.faq),
+        e('a', { href:links.website, target:'_blank', rel:'noopener noreferrer', className:'bg-black text-yellow-400 py-2 text-lg border-4 border-yellow-400 active:scale-95 transition-all text-center flex items-center justify-center', style:block }, t.web),
+        e('a', { href:links.maps, target:'_blank', rel:'noopener noreferrer', className:'bg-green-600 text-white py-2 text-lg border-4 border-black active:scale-95 transition-all text-center flex items-center justify-center', style:block }, t.maps)
       ),
-      e('div', { className:'flex gap-2 mb-2' },
-        e('a', { href:links.ig, target:'_blank', rel:'noopener noreferrer', className:'flex-1 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white py-3 text-2xl border-8 border-black active:scale-95 transition-all text-center flex items-center justify-center gap-2', style:block }, e(Instagram,{size:28}), 'INSTAGRAM'),
-        e('a', { href:links.msg, target:'_blank', rel:'noopener noreferrer', className:'flex-1 bg-blue-500 text-white py-3 text-2xl border-8 border-black active:scale-95 transition-all text-center flex items-center justify-center gap-2', style:block }, e(Messenger,{size:28}), 'MESSENGER')
+      // BUTTONS ROW 2 - Same size
+      e('div', { className:'grid grid-cols-2 gap-1 mb-2' },
+        e('a', { href:links.ig, target:'_blank', rel:'noopener noreferrer', className:'bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white py-2 text-base border-4 border-black active:scale-95 transition-all text-center flex items-center justify-center gap-1', style:block }, e(Instagram,{size:20}), 'INSTAGRAM'),
+        e('a', { href:links.msg, target:'_blank', rel:'noopener noreferrer', className:'bg-blue-500 text-white py-2 text-base border-4 border-black active:scale-95 transition-all text-center flex items-center justify-center gap-1', style:block }, e(Messenger,{size:20}), 'MESSENGER')
       ),
+      // BREWERY LIST
       e('div', { className:'space-y-1' }, breweryList),
-      e('div', { className:'mt-3 text-center' }, e('p',{className:'text-2xl text-yellow-400',style:block},t.copy))
+      // FOOTER
+      e('div', { className:'mt-2 text-center' }, e('p',{className:'text-lg text-yellow-400',style:block},t.copy))
     ),
     faqModal,
     qrModal,
