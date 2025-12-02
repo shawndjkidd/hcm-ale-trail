@@ -69,6 +69,7 @@ function App() {
   
   const codes = { 1:'BIACRAFT2024', 2:'DARKNESS2024', 3:'DEME2024', 4:'STEERSMAN2024', 5:'EASTWEST2024', 6:'ROOSTER2024', 7:'BRIDGES2024', 8:'BELGO2024' };
   
+  // FULL TRANSLATIONS
   const txt = {
     en: { 
       stamps:"STAMPS", done:"DONE!", go:"GO!", code:"CODE", web:"WEBSITE", maps:"MAPS", faq:"FAQ", 
@@ -76,31 +77,67 @@ function App() {
       s3:"GET STAMP!", s4:"8 STAMPS = FREE HAT!", rush:"NO RUSH!", scan:"SCAN QR", ask:"ASK FOR QR!", 
       ok:"OK!", nope:"NOPE!", copy:"© 2024 HCM ALE TRAIL", copyTag:"COPY", copied:"COPIED!", 
       directions:"DIRECTIONS", 
-      welcome:"Welcome to the HCM Ale Trail! Visit 8 awesome taprooms across Saigon. Buy a drink, collect a stamp, and get a free Ale Trail hat at your last stop! No deadline — do it in a day or a year." 
+      welcome:"Welcome to the HCM Ale Trail! Visit 8 awesome taprooms across Saigon. Buy a drink, collect a stamp, and get a free Ale Trail hat at your last stop! No deadline — do it in a day or a year.",
+      // Brewery taglines
+      tag1: "Funky names, creative food, and the OG craft beer hangout.",
+      tag2: "Bold beers, bold branding. Known for IPAs, stouts, and indie taproom vibe.",
+      tag3: "Underground feel with clean, small-batch brews. A local hidden gem.",
+      tag4: "Approachable beers and chill vibes. Great for groups and newcomers.",
+      tag5: "Sleek brewhouse with bold beers, food, and rooftop. Award-winning!",
+      tag6: "Casual and affordable with clean styles. Great for local vibes.",
+      tag7: "Born in Da Nang, focused on sustainability. Always something new!",
+      tag8: "Rich Belgian-style beers in a medieval space. Perfect for big pours."
     },
     vi: { 
       stamps:"TEM", done:"XONG!", go:"OK!", code:"MÃ", web:"WEBSITE", maps:"BẢN ĐỒ", faq:"FAQ", 
       how:"CÁCH CHƠI", s1:"ĐẾN QUÁN BIA", s2:"MUA BIA & LẤY:", s2a:"MÃ QR", s2b:"HOẶC MÃ SỐ", 
       s3:"NHẬN TEM!", s4:"8 TEM = MŨ FREE!", rush:"TỪ TỪ!", scan:"QUÉT QR", ask:"HỎI MÃ QR!", 
-      ok:"OK!", nope:"SAI!", copy:"© 2024 ALE TRAIL", copyTag:"COPY", copied:"COPIED!", 
+      ok:"OK!", nope:"SAI!", copy:"© 2024 ALE TRAIL", copyTag:"SAO CHÉP", copied:"ĐÃ SAO CHÉP!", 
       directions:"CHỈ ĐƯỜNG",
-      welcome:"Chào mừng đến HCM Ale Trail! Ghé 8 quán bia thủ công ở Sài Gòn. Mua bia, lấy tem, đổi mũ miễn phí! Không giới hạn thời gian." 
+      welcome:"Chào mừng đến HCM Ale Trail! Ghé 8 quán bia thủ công ở Sài Gòn. Mua bia, lấy tem, đổi mũ miễn phí! Không giới hạn thời gian.",
+      // Brewery taglines in Vietnamese
+      tag1: "Tên độc đáo, đồ ăn sáng tạo, và quán bia thủ công đầu tiên của Sài Gòn.",
+      tag2: "Bia đậm đà, thương hiệu nổi bật. Nổi tiếng với IPA, stout và không gian indie.",
+      tag3: "Phong cách underground với bia nhỏ mẻ, sạch. Viên ngọc ẩn của địa phương.",
+      tag4: "Bia dễ uống và không gian thư giãn. Tuyệt vời cho nhóm và người mới.",
+      tag5: "Nhà máy bia sang trọng với bia đậm, đồ ăn và sân thượng. Đạt nhiều giải thưởng!",
+      tag6: "Thoải mái và giá cả phải chăng. Tuyệt vời cho không khí địa phương.",
+      tag7: "Sinh ra ở Đà Nẵng, tập trung vào bền vững. Luôn có điều mới mẻ!",
+      tag8: "Bia kiểu Bỉ đậm đà trong không gian trung cổ. Hoàn hảo cho ly lớn."
     },
     ko: { 
       stamps:"스탬프", done:"완료!", go:"확인!", code:"코드", web:"웹사이트", maps:"지도", faq:"FAQ", 
-      how:"방법", s1:"양조장 방문", s2:"맥주 & 받기:", s2a:"QR 코드", s2b:"또는 비밀코드", 
-      s3:"스탬프!", s4:"8개 = 무료모자!", rush:"천천히!", scan:"QR스캔", ask:"QR 요청!", 
-      ok:"OK!", nope:"오류!", copy:"© 2024 HCM", copyTag:"복사", copied:"완료!", 
+      how:"참여 방법", s1:"양조장 방문", s2:"맥주 구매 후:", s2a:"QR 코드", s2b:"또는 비밀코드", 
+      s3:"스탬프 받기!", s4:"8개 = 무료 모자!", rush:"천천히!", scan:"QR 스캔", ask:"QR 요청!", 
+      ok:"OK!", nope:"오류!", copy:"© 2024 HCM", copyTag:"복사", copied:"복사됨!", 
       directions:"길찾기",
-      welcome:"HCM Ale Trail에 오신 것을 환영합니다! 사이공의 8개 탭룸을 방문하세요. 음료를 사고, 스탬프를 모으고, 마지막에 무료 모자를 받으세요!" 
+      welcome:"HCM Ale Trail에 오신 것을 환영합니다! 사이공의 8개 탭룸을 방문하세요. 음료를 사고, 스탬프를 모으고, 마지막에 무료 모자를 받으세요!",
+      // Brewery taglines in Korean
+      tag1: "독특한 이름, 창의적인 음식, 오리지널 크래프트 비어 명소.",
+      tag2: "대담한 맥주, 대담한 브랜딩. IPA, 스타우트, 인디 탭룸 분위기로 유명.",
+      tag3: "언더그라운드 느낌의 깔끔한 소규모 양조장. 숨겨진 보석.",
+      tag4: "친근한 맥주와 편안한 분위기. 그룹과 입문자에게 좋음.",
+      tag5: "세련된 양조장, 대담한 맥주, 음식, 루프탑. 수상 경력!",
+      tag6: "캐주얼하고 저렴한 깔끔한 스타일. 로컬 분위기에 딱.",
+      tag7: "다낭에서 시작, 지속가능성에 집중. 항상 새로운 것!",
+      tag8: "중세풍 공간의 벨기에 스타일 맥주. 큰 잔에 딱."
     },
     ja: { 
       stamps:"スタンプ", done:"完了!", go:"OK!", code:"コード", web:"ウェブ", maps:"地図", faq:"FAQ", 
-      how:"遊び方", s1:"醸造所へ行く", s2:"ビール買って:", s2a:"QRコード", s2b:"または秘密コード", 
-      s3:"スタンプ!", s4:"8個=無料帽子!", rush:"ゆっくり!", scan:"QRスキャン", ask:"QR聞いて!", 
-      ok:"OK!", nope:"違う!", copy:"© 2024 HCM", copyTag:"コピー", copied:"完了!", 
+      how:"遊び方", s1:"醸造所へ行く", s2:"ビール購入で:", s2a:"QRコード", s2b:"または秘密コード", 
+      s3:"スタンプゲット!", s4:"8個=無料帽子!", rush:"ゆっくり!", scan:"QRスキャン", ask:"QR聞いて!", 
+      ok:"OK!", nope:"違う!", copy:"© 2024 HCM", copyTag:"コピー", copied:"コピー完了!", 
       directions:"道案内",
-      welcome:"HCM Ale Trailへようこそ！サイゴンの8つのタップルームを訪れて、ドリンクを買い、スタンプを集めて、無料の帽子をゲットしよう！" 
+      welcome:"HCM Ale Trailへようこそ！サイゴンの8つのタップルームを訪れて、ドリンクを買い、スタンプを集めて、無料の帽子をゲットしよう！",
+      // Brewery taglines in Japanese
+      tag1: "ユニークな名前、創造的な料理、元祖クラフトビールの聖地。",
+      tag2: "大胆なビール、大胆なブランディング。IPA、スタウト、インディーな雰囲気で有名。",
+      tag3: "アンダーグラウンドな雰囲気、クリーンな小規模醸造。隠れた名店。",
+      tag4: "親しみやすいビールとリラックスした雰囲気。グループや初心者に最適。",
+      tag5: "洗練された醸造所、大胆なビール、料理、屋上。受賞歴あり！",
+      tag6: "カジュアルでリーズナブル。地元の雰囲気に最適。",
+      tag7: "ダナン生まれ、サステナビリティ重視。常に新しい何かが！",
+      tag8: "中世風空間のベルギースタイルビール。大きなグラスに最適。"
     }
   };
   const t = txt[lang];
@@ -112,17 +149,20 @@ function App() {
     { c:'ja', f:'https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/1200px-Flag_of_Japan.svg.png' }
   ];
 
-  // BREWERIES WITH GOOGLE MAPS LINKS
+  // BREWERIES - taglines will be looked up from translations
   const breweries = [
-    { id:1, name:"BIACRAFT", dist:"District 3", addr:"1 Le Ngo Cat, District 3", tagline:"Funky names, creative food, and the OG craft beer hangout.", initials:"BC", color:"#e74c3c", mapsUrl:"https://maps.google.com/?q=BiaCraft+Artisan+Ales+1+Le+Ngo+Cat+District+3+Ho+Chi+Minh", ig:"https://www.instagram.com/biacraftartisanales/", fb:"https://facebook.com/biacraft", tags:"#hcmaletrail @biacraftartisanales" },
-    { id:2, name:"HEART OF DARKNESS", dist:"District 1", addr:"31D Ly Tu Trong, District 1", tagline:"Bold beers, bold branding. Known for IPAs, stouts, and indie taproom vibe.", initials:"HD", color:"#2c3e50", mapsUrl:"https://maps.google.com/?q=Heart+of+Darkness+Craft+Brewery+31D+Ly+Tu+Trong+District+1+Ho+Chi+Minh", ig:"https://instagram.com/heartofdarknessbrewery", fb:"https://facebook.com/HeartOfDarknessBrewery", tags:"#hcmaletrail @heartofdarknessbrewery" },
-    { id:3, name:"DEME", dist:"District 3", addr:"201B Nam Ky Khoi Nghia, District 3", tagline:"Underground feel with clean, small-batch brews. A local hidden gem.", initials:"DM", color:"#27ae60", mapsUrl:"https://maps.google.com/?q=Deme+Brewing+201B+Nam+Ky+Khoi+Nghia+District+3+Ho+Chi+Minh", ig:"https://instagram.com/demebrewing", fb:"https://facebook.com/demebrewing", tags:"#hcmaletrail @demebrewing" },
-    { id:4, name:"STEERSMAN", dist:"Tan Binh", addr:"18B Cong Hoa, Tan Binh", tagline:"Approachable beers and chill vibes. Great for groups and newcomers.", initials:"SM", color:"#3498db", mapsUrl:"https://maps.google.com/?q=Steersman+Brewery+18B+Cong+Hoa+Tan+Binh+Ho+Chi+Minh", ig:"https://instagram.com/steersmanbrewery", fb:"https://facebook.com/steersmanbrewery", tags:"#hcmaletrail @steersmanbrewery" },
-    { id:5, name:"EAST WEST", dist:"District 1", addr:"181-185 Ly Tu Trong, District 1", tagline:"Sleek brewhouse with bold beers, food, and rooftop. Award-winning!", initials:"EW", color:"#f39c12", mapsUrl:"https://maps.google.com/?q=East+West+Brewing+Co+181+Ly+Tu+Trong+District+1+Ho+Chi+Minh", ig:"https://instagram.com/eastwestbrewing", fb:"https://facebook.com/eastwestbrewery", tags:"#hcmaletrail @eastwestbrewing" },
-    { id:6, name:"ROOSTER", dist:"District 1", addr:"31 Ho Huan Nghiep, District 1", tagline:"Casual and affordable with clean styles. Great for local vibes.", initials:"RB", color:"#e67e22", mapsUrl:"https://maps.google.com/?q=Rooster+Beers+31+Ho+Huan+Nghiep+District+1+Ho+Chi+Minh", ig:"https://instagram.com/roosterbeers", fb:"https://facebook.com/roosterbeers", tags:"#hcmaletrail @roosterbeers" },
-    { id:7, name:"7 BRIDGES", dist:"District 1", addr:"25 Ly Tu Trong, District 1", tagline:"Born in Da Nang, focused on sustainability. Always something new!", initials:"7B", color:"#9b59b6", mapsUrl:"https://maps.google.com/?q=7+Bridges+Brewing+25+Ly+Tu+Trong+District+1+Ho+Chi+Minh", ig:"https://instagram.com/7bridgesbrewing", fb:"https://facebook.com/7BridgesBrewingCo", tags:"#hcmaletrail @7bridgesbrewing" },
-    { id:8, name:"BELGO", dist:"District 1", addr:"159A Nguyen Van Thu, District 1", tagline:"Rich Belgian-style beers in a medieval space. Perfect for big pours.", initials:"BG", color:"#c0392b", mapsUrl:"https://maps.google.com/?q=Belgo+Belgian+Craft+Beer+159A+Nguyen+Van+Thu+District+1+Ho+Chi+Minh", ig:"https://instagram.com/belgosaigon", fb:"https://facebook.com/belgosaigon", tags:"#hcmaletrail @belgosaigon" }
+    { id:1, name:"BIACRAFT", dist:"District 3", addr:"1 Le Ngo Cat, District 3", tagKey:"tag1", initials:"BC", color:"#e74c3c", mapsUrl:"https://maps.google.com/?q=BiaCraft+Artisan+Ales+1+Le+Ngo+Cat+District+3+Ho+Chi+Minh", ig:"https://www.instagram.com/biacraftartisanales/", fb:"https://facebook.com/biacraft", tags:"#hcmaletrail @biacraftartisanales" },
+    { id:2, name:"HEART OF DARKNESS", dist:"District 1", addr:"31D Ly Tu Trong, District 1", tagKey:"tag2", initials:"HD", color:"#2c3e50", mapsUrl:"https://maps.google.com/?q=Heart+of+Darkness+Craft+Brewery+31D+Ly+Tu+Trong+District+1+Ho+Chi+Minh", ig:"https://instagram.com/heartofdarknessbrewery", fb:"https://facebook.com/HeartOfDarknessBrewery", tags:"#hcmaletrail @heartofdarknessbrewery" },
+    { id:3, name:"DEME", dist:"District 3", addr:"201B Nam Ky Khoi Nghia, District 3", tagKey:"tag3", initials:"DM", color:"#27ae60", mapsUrl:"https://maps.google.com/?q=Deme+Brewing+201B+Nam+Ky+Khoi+Nghia+District+3+Ho+Chi+Minh", ig:"https://instagram.com/demebrewing", fb:"https://facebook.com/demebrewing", tags:"#hcmaletrail @demebrewing" },
+    { id:4, name:"STEERSMAN", dist:"Tan Binh", addr:"18B Cong Hoa, Tan Binh", tagKey:"tag4", initials:"SM", color:"#3498db", mapsUrl:"https://maps.google.com/?q=Steersman+Brewery+18B+Cong+Hoa+Tan+Binh+Ho+Chi+Minh", ig:"https://instagram.com/steersmanbrewery", fb:"https://facebook.com/steersmanbrewery", tags:"#hcmaletrail @steersmanbrewery" },
+    { id:5, name:"EAST WEST", dist:"District 1", addr:"181-185 Ly Tu Trong, District 1", tagKey:"tag5", initials:"EW", color:"#f39c12", mapsUrl:"https://maps.google.com/?q=East+West+Brewing+Co+181+Ly+Tu+Trong+District+1+Ho+Chi+Minh", ig:"https://instagram.com/eastwestbrewing", fb:"https://facebook.com/eastwestbrewery", tags:"#hcmaletrail @eastwestbrewing" },
+    { id:6, name:"ROOSTER", dist:"District 1", addr:"31 Ho Huan Nghiep, District 1", tagKey:"tag6", initials:"RB", color:"#e67e22", mapsUrl:"https://maps.google.com/?q=Rooster+Beers+31+Ho+Huan+Nghiep+District+1+Ho+Chi+Minh", ig:"https://instagram.com/roosterbeers", fb:"https://facebook.com/roosterbeers", tags:"#hcmaletrail @roosterbeers" },
+    { id:7, name:"7 BRIDGES", dist:"District 1", addr:"25 Ly Tu Trong, District 1", tagKey:"tag7", initials:"7B", color:"#9b59b6", mapsUrl:"https://maps.google.com/?q=7+Bridges+Brewing+25+Ly+Tu+Trong+District+1+Ho+Chi+Minh", ig:"https://instagram.com/7bridgesbrewing", fb:"https://facebook.com/7BridgesBrewingCo", tags:"#hcmaletrail @7bridgesbrewing" },
+    { id:8, name:"BELGO", dist:"District 1", addr:"159A Nguyen Van Thu, District 1", tagKey:"tag8", initials:"BG", color:"#c0392b", mapsUrl:"https://maps.google.com/?q=Belgo+Belgian+Craft+Beer+159A+Nguyen+Van+Thu+District+1+Ho+Chi+Minh", ig:"https://instagram.com/belgosaigon", fb:"https://facebook.com/belgosaigon", tags:"#hcmaletrail @belgosaigon" }
   ];
+
+  // Get translated tagline for brewery
+  const getTagline = (brewery) => t[brewery.tagKey];
 
   const validate = () => {
     if (codes[selected.id] === code.toUpperCase().trim()) {
@@ -147,7 +187,7 @@ function App() {
     )
   );
 
-  // BREWERY LIST WITH INITIALS AS FALLBACK
+  // BREWERY LIST
   const breweryList = breweries.map(b => {
     const has = stamps.includes(b.id);
     return e('div', { key:b.id, onClick:()=>setSelected(b), className:`${has?'bg-yellow-400':'bg-white'} border-4 border-black cursor-pointer active:scale-[0.98] transition-all` },
@@ -211,7 +251,7 @@ function App() {
     )
   );
 
-  // BREWERY MODAL WITH MAPS BUTTON
+  // BREWERY MODAL WITH TRANSLATED TAGLINE
   const breweryModal = selected && e('div', { className:'fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-2' },
     e('div', { className:'bg-yellow-400 w-full max-w-sm border-4 border-black relative max-h-[90vh] overflow-y-auto' },
       e('button', { onClick:()=>{setSelected(null);setCode('');setError('');setCopied(false);setAutoStamped(false);}, className:'absolute top-2 right-2 bg-red-600 text-yellow-400 w-10 h-10 flex items-center justify-center border-4 border-black text-2xl z-10', style:block }, 'X'),
@@ -226,7 +266,7 @@ function App() {
         e('div', { className:'bg-red-600 border-4 border-black p-3 mb-2' },
           e('h2',{className:'text-2xl sm:text-3xl text-yellow-400 text-center',style:breweryBlock},selected.name),
           e('p',{className:'text-sm text-yellow-300 mt-1 text-center'},'📍 '+selected.addr),
-          e('p',{className:'text-xs text-yellow-200 mt-2 text-center italic'},selected.tagline)
+          e('p',{className:'text-xs text-yellow-200 mt-2 text-center italic'},getTagline(selected))
         ),
         // GOOGLE MAPS DIRECTIONS BUTTON
         e('a', { 
@@ -241,7 +281,7 @@ function App() {
           e('a', { href:selected.ig, target:'_blank', rel:'noopener noreferrer', className:'flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 text-xl border-2 border-black flex items-center justify-center gap-1 active:scale-95 transition-all', style:block }, e(Instagram,{size:20}), 'IG'),
           e('a', { href:selected.fb, target:'_blank', rel:'noopener noreferrer', className:'flex-1 bg-blue-600 text-white py-3 text-xl border-2 border-black flex items-center justify-center gap-1 active:scale-95 transition-all', style:block }, e(Facebook,{size:20}), 'FB')
         ),
-        // Copy tags
+        // Copy tags with translated button
         e('div', { className:'bg-black border-2 border-yellow-400 p-2 mb-2' },
           e('p',{className:'text-xs text-yellow-400 text-center mb-1 font-mono'},selected.tags),
           e('button', { onClick:()=>copyTags(selected.tags), className:`w-full ${copied?'bg-green-600 text-white':'bg-yellow-400 text-black'} py-2 text-lg border-2 border-black flex items-center justify-center gap-1 active:scale-95 transition-all`, style:block }, e(Copy,{size:18}), copied?t.copied:t.copyTag)
