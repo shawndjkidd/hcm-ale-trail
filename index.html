@@ -66,7 +66,7 @@ function App() {
   // Registration form
   const [regName, setRegName] = useState('');
   const [regEmail, setRegEmail] = useState('');
-  const [regPhone, setRegPhone] = useState('');
+  const [regBirthdate, setRegBirthdate] = useState('');
   const [pendingStamp, setPendingStamp] = useState(null);
   const [autoStamped, setAutoStamped] = useState(false);
   const [resetTaps, setResetTaps] = useState(0);
@@ -82,7 +82,7 @@ function App() {
       setUserInfo(null);
       setCompletionName('');
       setCompletionEmail('');
-      setCompletionPhone('');
+      setCompletionBirthdate('');
       setCompletionSubmitted(false);
       alert('Card reset! Start fresh at any brewery.');
       window.location.href = window.location.pathname;
@@ -97,9 +97,15 @@ function App() {
       setResetTaps(0);
       resetCard();
     }
-    // Reset tap count after 3 seconds of no tapping
-    setTimeout(() => setResetTaps(0), 3000);
   };
+  
+  // Reset tap count after 3 seconds of inactivity
+  useEffect(() => {
+    if (resetTaps > 0 && resetTaps < 5) {
+      const timer = setTimeout(() => setResetTaps(0), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [resetTaps]);
 
   // Check for reset URL parameter
   useEffect(() => {
@@ -117,7 +123,7 @@ function App() {
   // Completion form state
   const [completionName, setCompletionName] = useState(() => userInfo?.name || '');
   const [completionEmail, setCompletionEmail] = useState(() => userInfo?.email || '');
-  const [completionPhone, setCompletionPhone] = useState(() => userInfo?.phone || '');
+  const [completionBirthdate, setCompletionBirthdate] = useState(() => userInfo?.birthdate || '');
   const [completionSubmitted, setCompletionSubmitted] = useState(false);
 
   useEffect(() => {
@@ -133,7 +139,7 @@ function App() {
     // Pre-fill completion form if user already registered
     if (userInfo?.name && !completionName) setCompletionName(userInfo.name);
     if (userInfo?.email && !completionEmail) setCompletionEmail(userInfo.email);
-    if (userInfo?.phone && !completionPhone) setCompletionPhone(userInfo.phone);
+    if (userInfo?.birthdate && !completionBirthdate) setCompletionBirthdate(userInfo.birthdate);
   }, [userInfo]);
 
   useEffect(() => {
@@ -199,7 +205,7 @@ function App() {
       welcome:"Welcome to the HCM Ale Trail! Visit 8 awesome taprooms across Saigon. Buy a drink, collect a stamp, and get a free Ale Trail hat at your last stop! No deadline — do it in a day or a year.",
       tips:"KEEP YOUR STAMPS", tip1:"Always use the same browser (Safari OR Chrome, not both)", tip2:"Don't use Private/Incognito mode", tip3:"Don't clear browser data until you finish!",
       saveProgress:"SAVE PROGRESS", saveDesc:"Email yourself a recovery link", emailPlaceholder:"Enter your email", sendLink:"SEND RECOVERY LINK", linkSent:"CHECK YOUR EMAIL!", linkCopied:"LINK COPIED!",
-      register:"START YOUR TRAIL!", regDesc:"Enter your info to track your progress", regNote:"We'll use this to link all your stamps & beers",
+      register:"START YOUR TRAIL!", regDesc:"Enter your info to track your progress", regNote:"We'll use this to link all your stamps & beers", birthdate:"BIRTHDATE",
       tag1: "Funky names, creative food, and the OG craft beer hangout.",
       tag2: "Bold beers, bold branding. Known for IPAs, stouts, and indie taproom vibe.",
       tag3: "Underground feel with clean, small-batch brews. A local hidden gem.",
@@ -222,7 +228,7 @@ function App() {
       welcome:"Chào mừng đến HCM Ale Trail! Ghé 8 quán bia thủ công ở Sài Gòn. Mua bia, lấy tem, đổi mũ miễn phí! Không giới hạn thời gian.",
       tips:"GIỮ TEM CỦA BẠN", tip1:"Luôn dùng cùng 1 trình duyệt (Safari HOẶC Chrome)", tip2:"Không dùng chế độ ẩn danh", tip3:"Không xóa dữ liệu trình duyệt!",
       saveProgress:"LƯU TIẾN TRÌNH", saveDesc:"Gửi link khôi phục qua email", emailPlaceholder:"Nhập email của bạn", sendLink:"GỬI LINK", linkSent:"KIỂM TRA EMAIL!", linkCopied:"ĐÃ SAO CHÉP!",
-      register:"BẮT ĐẦU HÀNH TRÌNH!", regDesc:"Nhập thông tin để theo dõi tiến trình", regNote:"Chúng tôi sẽ dùng để liên kết tất cả tem và bia của bạn",
+      register:"BẮT ĐẦU HÀNH TRÌNH!", regDesc:"Nhập thông tin để theo dõi tiến trình", regNote:"Chúng tôi sẽ dùng để liên kết tất cả tem và bia của bạn", birthdate:"NGÀY SINH",
       tag1: "Tên độc đáo, đồ ăn sáng tạo, và quán bia thủ công đầu tiên của Sài Gòn.",
       tag2: "Bia đậm đà, thương hiệu nổi bật. Nổi tiếng với IPA, stout và không gian indie.",
       tag3: "Phong cách underground với bia nhỏ mẻ, sạch. Viên ngọc ẩn của địa phương.",
@@ -245,7 +251,7 @@ function App() {
       welcome:"HCM Ale Trail에 오신 것을 환영합니다! 사이공의 8개 탭룸을 방문하세요. 음료를 사고, 스탬프를 모으고, 마지막에 무료 모자를 받으세요!",
       tips:"스탬프 유지 팁", tip1:"항상 같은 브라우저 사용 (Safari 또는 Chrome)", tip2:"시크릿/프라이빗 모드 사용 금지", tip3:"완료 전 브라우저 데이터 삭제 금지!",
       saveProgress:"진행 저장", saveDesc:"복구 링크를 이메일로 받기", emailPlaceholder:"이메일 입력", sendLink:"링크 전송", linkSent:"이메일 확인!", linkCopied:"복사됨!",
-      register:"시작하기!", regDesc:"진행 상황을 추적하려면 정보를 입력하세요", regNote:"모든 스탬프와 맥주를 연결하는 데 사용됩니다",
+      register:"시작하기!", regDesc:"진행 상황을 추적하려면 정보를 입력하세요", regNote:"모든 스탬프와 맥주를 연결하는 데 사용됩니다", birthdate:"생년월일",
       tag1: "독특한 이름, 창의적인 음식, 오리지널 크래프트 비어 명소.",
       tag2: "대담한 맥주, 대담한 브랜딩. IPA, 스타우트, 인디 탭룸 분위기로 유명.",
       tag3: "언더그라운드 느낌의 깔끔한 소규모 양조장. 숨겨진 보석.",
@@ -268,7 +274,7 @@ function App() {
       welcome:"HCM Ale Trailへようこそ！サイゴンの8つのタップルームを訪れて、ドリンクを買い、スタンプを集めて、無料の帽子をゲットしよう！",
       tips:"スタンプを守る", tip1:"同じブラウザを使用（SafariかChromeどちらか）", tip2:"プライベートモード使用禁止", tip3:"完了までデータ削除禁止！",
       saveProgress:"進捗を保存", saveDesc:"復元リンクをメールで受け取る", emailPlaceholder:"メールアドレス", sendLink:"リンク送信", linkSent:"メール確認！", linkCopied:"コピー完了！",
-      register:"スタート!", regDesc:"進捗を追跡するには情報を入力してください", regNote:"すべてのスタンプとビールをリンクするために使用されます",
+      register:"スタート!", regDesc:"進捗を追跡するには情報を入力してください", regNote:"すべてのスタンプとビールをリンクするために使用されます", birthdate:"生年月日",
       tag1: "ユニークな名前、創造的な料理、元祖クラフトビールの聖地。",
       tag2: "大胆なビール、大胆なブランディング。IPA、スタウト、インディーな雰囲気で有名。",
       tag3: "アンダーグラウンドな雰囲気、クリーンな小規模醸造。隠れた名店。",
@@ -399,7 +405,7 @@ function App() {
     const info = {
       name: regName,
       email: regEmail,
-      phone: regPhone,
+      birthdate: regBirthdate,
       registeredAt: new Date().toISOString()
     };
     setUserInfo(info);
@@ -409,7 +415,7 @@ function App() {
       type: 'registration',
       visitorName: regName,
       visitorEmail: regEmail,
-      visitorPhone: regPhone,
+      visitorBirthdate: regBirthdate,
       brewery: pendingStamp?.brewery?.name || '',
       method: pendingStamp?.method || ''
     });
@@ -436,7 +442,7 @@ function App() {
     }
     
     setShowRegister(false);
-    setRegName(''); setRegEmail(''); setRegPhone('');
+    setRegName(''); setRegEmail(''); setRegBirthdate('');
     setPendingStamp(null);
   };
 
@@ -446,7 +452,7 @@ function App() {
       ...userInfo,
       name: completionName,
       email: completionEmail,
-      phone: completionPhone,
+      birthdate: completionBirthdate,
       finalBrewery: selected?.name || 'Unknown',
       completed: true,
       completedAt: new Date().toISOString()
@@ -457,7 +463,7 @@ function App() {
       type: 'completion',
       visitorName: completionName,
       visitorEmail: completionEmail,
-      visitorPhone: completionPhone,
+      visitorBirthdate: completionBirthdate,
       finalBrewery: selected?.name || 'Unknown'
     });
     setCompletionSubmitted(true);
@@ -687,8 +693,8 @@ function App() {
             e('input', { type:'email', value:regEmail, onChange:ev=>setRegEmail(ev.target.value), className:'w-full px-3 py-2 border-4 border-black text-lg', placeholder:'your@email.com' })
           ),
           e('div', null,
-            e('label', { className:'text-red-600 text-sm font-bold' }, t.phone+' (optional)'),
-            e('input', { type:'tel', value:regPhone, onChange:ev=>setRegPhone(ev.target.value), className:'w-full px-3 py-2 border-4 border-black text-lg', placeholder:'0901234567' })
+            e('label', { className:'text-red-600 text-sm font-bold' }, t.birthdate+' (optional)'),
+            e('input', { type:'date', value:regBirthdate, onChange:ev=>setRegBirthdate(ev.target.value), className:'w-full px-3 py-2 border-4 border-black text-lg' })
           ),
           e('button', { onClick:completeRegistration, disabled:!regName.trim()||!regEmail.trim(), className:`w-full ${regName.trim()&&regEmail.trim()?'bg-green-600':'bg-gray-400'} text-white py-4 mt-2 text-2xl border-4 border-black`, style:block }, '🍺 '+t.go)
         )
@@ -785,8 +791,8 @@ function App() {
                 e('input', { type:'email', value:completionEmail, onChange:ev=>setCompletionEmail(ev.target.value), className:'w-full px-3 py-2 border-4 border-black text-lg' })
               ),
               e('div', null,
-                e('label', { className:'text-red-600 text-sm font-bold' }, t.phone),
-                e('input', { type:'tel', value:completionPhone, onChange:ev=>setCompletionPhone(ev.target.value), className:'w-full px-3 py-2 border-4 border-black text-lg' })
+                e('label', { className:'text-red-600 text-sm font-bold' }, t.birthdate),
+                e('input', { type:'date', value:completionBirthdate, onChange:ev=>setCompletionBirthdate(ev.target.value), className:'w-full px-3 py-2 border-4 border-black text-lg' })
               ),
               e('button', { onClick:submitCompletion, disabled:!completionName.trim()||!completionEmail.trim(), className:`w-full ${completionName.trim()&&completionEmail.trim()?'bg-green-600':'bg-gray-400'} text-white py-4 mt-2 text-2xl border-4 border-black`, style:block }, t.submit)
             )
@@ -870,7 +876,8 @@ function App() {
     e('div', { className:'max-w-md mx-auto' },
       e('div', { className:'flex justify-center gap-1 mb-2' }, flagBtns),
       e('div', { className:'bg-yellow-400 border-4 border-black p-2 mb-2 text-center' },
-        e('h1', { onClick:handleTitleTap, className:'text-3xl sm:text-4xl md:text-5xl text-red-600 leading-none cursor-pointer select-none', style:{...block,letterSpacing:'2px'} }, 'HCM ALE TRAIL'),
+        e('h1', { onClick:handleTitleTap, className:'text-3xl sm:text-4xl md:text-5xl text-red-600 leading-none cursor-pointer select-none active:scale-95 transition-transform', style:{...block,letterSpacing:'2px'} }, 'HCM ALE TRAIL'),
+        resetTaps > 0 && e('p', { className:'text-xs text-yellow-600' }, '🔄 ' + resetTaps + '/5 taps'),
         e('p', { className:'text-xs text-red-700 mt-2 px-2 leading-relaxed', style:{fontFamily:'sans-serif', fontWeight:'normal', textTransform:'none', letterSpacing:'0.3px'} }, t.welcome)
       ),
       e('div', { className:'bg-black border-4 border-yellow-400 p-2 mb-2' },
