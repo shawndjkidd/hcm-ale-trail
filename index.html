@@ -94,7 +94,17 @@ function App() {
         setStamps(newStamps);
         setAutoStamped(true);
         const b = breweries.find(x => x.id === stampId);
-        if (b) setSelected(b);
+        if (b) {
+          setSelected(b);
+          // Log stamp collection to Google Sheets
+          sendToSheets({
+            type: 'stamp',
+            brewery: b.name,
+            breweryId: b.id,
+            method: 'QR',
+            stampCount: newStamps.length
+          });
+        }
         // Check if this completes the trail
         if (newStamps.length === 8 && !userInfo?.completed) {
           setTimeout(() => setShowCompletion(true), 1500);
@@ -232,14 +242,20 @@ function App() {
       console.log('Google Sheets not configured. Data:', data);
       return;
     }
+    // Add client-side timestamp
+    const dataWithTime = {
+      ...data,
+      clientTime: new Date().toISOString(),
+      localTime: new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' })
+    };
     try {
       await fetch(GOOGLE_SHEETS_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify(dataWithTime)
       });
-      console.log('Sent to Google Sheets:', data);
+      console.log('Sent to Google Sheets:', dataWithTime);
     } catch (err) {
       console.log('Sheet error:', err);
     }
@@ -250,6 +266,14 @@ function App() {
       const newStamps = [...stamps, selected.id];
       setStamps(newStamps);
       setCode(''); setError('');
+      // Log stamp collection to Google Sheets
+      sendToSheets({
+        type: 'stamp',
+        brewery: selected.name,
+        breweryId: selected.id,
+        method: 'CODE',
+        stampCount: newStamps.length
+      });
       // Check if completed
       if (newStamps.length === 8 && !userInfo?.completed) {
         setTimeout(() => {
