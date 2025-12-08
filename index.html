@@ -22,7 +22,7 @@ const { useState, useEffect } = React;
 // ============================================
 // GOOGLE SHEETS CONFIG
 // ============================================
-const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwqPRXw7iknhejI-1D4eiTQGslIL83LkmV4x2jq-E0UvZnA_7HM7D1N5CAP3xJM33KfmA/exec';
+const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzjNuqNOwv7fSUdqqv-05RphKQnoUK0706drE2AQTKJErenxwmuGvfNOS9aC5COk_tGWg/exec';
 // ============================================
 
 const block = { fontFamily: 'Impact, Haettenschweiler, "Arial Black", sans-serif', fontWeight: 900, letterSpacing: '0.5px', textTransform: 'uppercase' };
@@ -55,10 +55,19 @@ function App() {
   const [showBeerLog, setShowBeerLog] = useState(false);
   const [showMyBeers, setShowMyBeers] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
   const [showSaveProgress, setShowSaveProgress] = useState(false);
   const [saveEmail, setSaveEmail] = useState('');
   const [saveSent, setSaveSent] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  
+  // Registration form
+  const [regName, setRegName] = useState('');
+  const [regEmail, setRegEmail] = useState('');
+  const [regPhone, setRegPhone] = useState('');
+  const [pendingStamp, setPendingStamp] = useState(null);
   const [autoStamped, setAutoStamped] = useState(false);
   
   // Beer log form state
@@ -67,9 +76,9 @@ function App() {
   const [beerNotes, setBeerNotes] = useState('');
   
   // Completion form state
-  const [completionName, setCompletionName] = useState('');
-  const [completionEmail, setCompletionEmail] = useState('');
-  const [completionPhone, setCompletionPhone] = useState('');
+  const [completionName, setCompletionName] = useState(() => userInfo?.name || '');
+  const [completionEmail, setCompletionEmail] = useState(() => userInfo?.email || '');
+  const [completionPhone, setCompletionPhone] = useState(() => userInfo?.phone || '');
   const [completionSubmitted, setCompletionSubmitted] = useState(false);
 
   useEffect(() => {
@@ -82,6 +91,10 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem('aletrail_user', JSON.stringify(userInfo));
+    // Pre-fill completion form if user already registered
+    if (userInfo?.name && !completionName) setCompletionName(userInfo.name);
+    if (userInfo?.email && !completionEmail) setCompletionEmail(userInfo.email);
+    if (userInfo?.phone && !completionPhone) setCompletionPhone(userInfo.phone);
   }, [userInfo]);
 
   useEffect(() => {
@@ -90,24 +103,33 @@ function App() {
     const stampCode = params.get('code');
     if (stampId && stampCode && codes[stampId] === stampCode.toUpperCase()) {
       if (!stamps.includes(stampId)) {
-        const newStamps = [...stamps, stampId];
-        setStamps(newStamps);
-        setAutoStamped(true);
         const b = breweries.find(x => x.id === stampId);
-        if (b) {
-          setSelected(b);
-          // Log stamp collection to Google Sheets
-          sendToSheets({
-            type: 'stamp',
-            brewery: b.name,
-            breweryId: b.id,
-            method: 'QR',
-            stampCount: newStamps.length
-          });
-        }
-        // Check if this completes the trail
-        if (newStamps.length === 8 && !userInfo?.completed) {
-          setTimeout(() => setShowCompletion(true), 1500);
+        // If no user registered yet, ask for info first
+        if (!userInfo?.name && stamps.length === 0) {
+          setPendingStamp({ id: stampId, brewery: b, method: 'QR' });
+          setShowRegister(true);
+        } else {
+          // Already registered, just add stamp
+          const newStamps = [...stamps, stampId];
+          setStamps(newStamps);
+          setAutoStamped(true);
+          if (b) {
+            setSelected(b);
+            sendToSheets({
+              type: 'stamp',
+              visitorName: userInfo?.name || '',
+              visitorEmail: userInfo?.email || '',
+              brewery: b.name,
+              breweryId: b.id,
+              method: 'QR',
+              stampCount: newStamps.length
+            });
+            // Auto backup recovery link
+            setTimeout(() => autoBackup(newStamps.length), 500);
+          }
+          if (newStamps.length === 8) {
+            setTimeout(() => setShowCompletion(true), 1500);
+          }
         }
       }
       window.history.replaceState({}, '', window.location.pathname);
@@ -138,6 +160,7 @@ function App() {
       welcome:"Welcome to the HCM Ale Trail! Visit 8 awesome taprooms across Saigon. Buy a drink, collect a stamp, and get a free Ale Trail hat at your last stop! No deadline — do it in a day or a year.",
       tips:"KEEP YOUR STAMPS", tip1:"Always use the same browser (Safari OR Chrome, not both)", tip2:"Don't use Private/Incognito mode", tip3:"Don't clear browser data until you finish!",
       saveProgress:"SAVE PROGRESS", saveDesc:"Email yourself a recovery link", emailPlaceholder:"Enter your email", sendLink:"SEND RECOVERY LINK", linkSent:"CHECK YOUR EMAIL!", linkCopied:"LINK COPIED!",
+      register:"START YOUR TRAIL!", regDesc:"Enter your info to track your progress", regNote:"We'll use this to link all your stamps & beers",
       tag1: "Funky names, creative food, and the OG craft beer hangout.",
       tag2: "Bold beers, bold branding. Known for IPAs, stouts, and indie taproom vibe.",
       tag3: "Underground feel with clean, small-batch brews. A local hidden gem.",
@@ -160,6 +183,7 @@ function App() {
       welcome:"Chào mừng đến HCM Ale Trail! Ghé 8 quán bia thủ công ở Sài Gòn. Mua bia, lấy tem, đổi mũ miễn phí! Không giới hạn thời gian.",
       tips:"GIỮ TEM CỦA BẠN", tip1:"Luôn dùng cùng 1 trình duyệt (Safari HOẶC Chrome)", tip2:"Không dùng chế độ ẩn danh", tip3:"Không xóa dữ liệu trình duyệt!",
       saveProgress:"LƯU TIẾN TRÌNH", saveDesc:"Gửi link khôi phục qua email", emailPlaceholder:"Nhập email của bạn", sendLink:"GỬI LINK", linkSent:"KIỂM TRA EMAIL!", linkCopied:"ĐÃ SAO CHÉP!",
+      register:"BẮT ĐẦU HÀNH TRÌNH!", regDesc:"Nhập thông tin để theo dõi tiến trình", regNote:"Chúng tôi sẽ dùng để liên kết tất cả tem và bia của bạn",
       tag1: "Tên độc đáo, đồ ăn sáng tạo, và quán bia thủ công đầu tiên của Sài Gòn.",
       tag2: "Bia đậm đà, thương hiệu nổi bật. Nổi tiếng với IPA, stout và không gian indie.",
       tag3: "Phong cách underground với bia nhỏ mẻ, sạch. Viên ngọc ẩn của địa phương.",
@@ -182,6 +206,7 @@ function App() {
       welcome:"HCM Ale Trail에 오신 것을 환영합니다! 사이공의 8개 탭룸을 방문하세요. 음료를 사고, 스탬프를 모으고, 마지막에 무료 모자를 받으세요!",
       tips:"스탬프 유지 팁", tip1:"항상 같은 브라우저 사용 (Safari 또는 Chrome)", tip2:"시크릿/프라이빗 모드 사용 금지", tip3:"완료 전 브라우저 데이터 삭제 금지!",
       saveProgress:"진행 저장", saveDesc:"복구 링크를 이메일로 받기", emailPlaceholder:"이메일 입력", sendLink:"링크 전송", linkSent:"이메일 확인!", linkCopied:"복사됨!",
+      register:"시작하기!", regDesc:"진행 상황을 추적하려면 정보를 입력하세요", regNote:"모든 스탬프와 맥주를 연결하는 데 사용됩니다",
       tag1: "독특한 이름, 창의적인 음식, 오리지널 크래프트 비어 명소.",
       tag2: "대담한 맥주, 대담한 브랜딩. IPA, 스타우트, 인디 탭룸 분위기로 유명.",
       tag3: "언더그라운드 느낌의 깔끔한 소규모 양조장. 숨겨진 보석.",
@@ -204,6 +229,7 @@ function App() {
       welcome:"HCM Ale Trailへようこそ！サイゴンの8つのタップルームを訪れて、ドリンクを買い、スタンプを集めて、無料の帽子をゲットしよう！",
       tips:"スタンプを守る", tip1:"同じブラウザを使用（SafariかChromeどちらか）", tip2:"プライベートモード使用禁止", tip3:"完了までデータ削除禁止！",
       saveProgress:"進捗を保存", saveDesc:"復元リンクをメールで受け取る", emailPlaceholder:"メールアドレス", sendLink:"リンク送信", linkSent:"メール確認！", linkCopied:"コピー完了！",
+      register:"スタート!", regDesc:"進捗を追跡するには情報を入力してください", regNote:"すべてのスタンプとビールをリンクするために使用されます",
       tag1: "ユニークな名前、創造的な料理、元祖クラフトビールの聖地。",
       tag2: "大胆なビール、大胆なブランディング。IPA、スタウト、インディーな雰囲気で有名。",
       tag3: "アンダーグラウンドな雰囲気、クリーンな小規模醸造。隠れた名店。",
@@ -263,23 +289,34 @@ function App() {
 
   const validate = () => {
     if (codes[selected.id] === code.toUpperCase().trim()) {
-      const newStamps = [...stamps, selected.id];
-      setStamps(newStamps);
-      setCode(''); setError('');
-      // Log stamp collection to Google Sheets
-      sendToSheets({
-        type: 'stamp',
-        brewery: selected.name,
-        breweryId: selected.id,
-        method: 'CODE',
-        stampCount: newStamps.length
-      });
-      // Check if completed
-      if (newStamps.length === 8 && !userInfo?.completed) {
-        setTimeout(() => {
-          setSelected(null);
-          setShowCompletion(true);
-        }, 1000);
+      // If no user registered yet and this is first stamp, ask for info
+      if (!userInfo?.name && stamps.length === 0) {
+        setPendingStamp({ id: selected.id, brewery: selected, method: 'CODE' });
+        setShowRegister(true);
+        setCode('');
+        setError('');
+      } else {
+        // Already registered, just add stamp
+        const newStamps = [...stamps, selected.id];
+        setStamps(newStamps);
+        setCode(''); setError('');
+        sendToSheets({
+          type: 'stamp',
+          visitorName: userInfo?.name || '',
+          visitorEmail: userInfo?.email || '',
+          brewery: selected.name,
+          breweryId: selected.id,
+          method: 'CODE',
+          stampCount: newStamps.length
+        });
+        // Auto backup recovery link
+        setTimeout(() => autoBackup(newStamps.length), 500);
+        if (newStamps.length === 8) {
+          setTimeout(() => {
+            setSelected(null);
+            setShowCompletion(true);
+          }, 1000);
+        }
       }
     } else setError(t.nope);
   };
@@ -303,22 +340,71 @@ function App() {
       date: new Date().toISOString()
     };
     setBeerLogs([...beerLogs, newBeer]);
-    // Send to Google Sheets
+    // Send to Google Sheets with user info
     sendToSheets({
       type: 'beer',
+      visitorName: userInfo?.name || '',
+      visitorEmail: userInfo?.email || '',
       brewery: selected.name,
       beerName: beerName,
       rating: beerRating,
-      notes: beerNotes,
-      userName: userInfo?.name || ''
+      notes: beerNotes
     });
     setBeerName(''); setBeerRating(0); setBeerNotes('');
     setShowBeerLog(false);
   };
 
+  // Complete registration and add first stamp
+  const completeRegistration = () => {
+    if (!regName.trim() || !regEmail.trim()) return;
+    const info = {
+      name: regName,
+      email: regEmail,
+      phone: regPhone,
+      registeredAt: new Date().toISOString()
+    };
+    setUserInfo(info);
+    
+    // Log registration
+    sendToSheets({
+      type: 'registration',
+      visitorName: regName,
+      visitorEmail: regEmail,
+      visitorPhone: regPhone,
+      brewery: pendingStamp?.brewery?.name || '',
+      method: pendingStamp?.method || ''
+    });
+    
+    // Now add the pending stamp
+    if (pendingStamp) {
+      const newStamps = [...stamps, pendingStamp.id];
+      setStamps(newStamps);
+      setAutoStamped(true);
+      setSelected(pendingStamp.brewery);
+      
+      sendToSheets({
+        type: 'stamp',
+        visitorName: regName,
+        visitorEmail: regEmail,
+        brewery: pendingStamp.brewery.name,
+        breweryId: pendingStamp.id,
+        method: pendingStamp.method,
+        stampCount: newStamps.length
+      });
+      
+      // Auto backup recovery link after first stamp
+      setTimeout(() => autoBackup(newStamps.length), 1000);
+    }
+    
+    setShowRegister(false);
+    setRegName(''); setRegEmail(''); setRegPhone('');
+    setPendingStamp(null);
+  };
+
   const submitCompletion = () => {
     if (!completionName.trim() || !completionEmail.trim()) return;
     const info = {
+      ...userInfo,
       name: completionName,
       email: completionEmail,
       phone: completionPhone,
@@ -330,9 +416,9 @@ function App() {
     // Send to Google Sheets
     sendToSheets({
       type: 'completion',
-      name: completionName,
-      email: completionEmail,
-      phone: completionPhone,
+      visitorName: completionName,
+      visitorEmail: completionEmail,
+      visitorPhone: completionPhone,
       finalBrewery: selected?.name || 'Unknown'
     });
     setCompletionSubmitted(true);
@@ -364,6 +450,21 @@ function App() {
     navigator.clipboard.writeText(generateRecoveryUrl()).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  // Auto backup after each stamp - copy link and show toast
+  const autoBackup = (stampCount) => {
+    const recoveryUrl = generateRecoveryUrl();
+    navigator.clipboard.writeText(recoveryUrl).then(() => {
+      setToastMessage('✅ ' + stampCount + '/8 - Recovery link copied!');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    }).catch(() => {
+      // If clipboard fails, still show confirmation
+      setToastMessage('✅ ' + stampCount + '/8 stamps saved!');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     });
   };
 
@@ -521,6 +622,37 @@ function App() {
               style:block 
             }, copied ? '✅ '+t.linkCopied : '📋 COPY LINK')
           )
+      )
+    )
+  );
+
+  // REGISTRATION MODAL (shown on first stamp)
+  const registerModal = showRegister && e('div', { className:'fixed inset-0 bg-black/90 z-[70] flex items-center justify-center p-4' },
+    e('div', { className:'bg-yellow-400 w-full max-w-sm border-4 border-black relative' },
+      e('div', { className:'p-4' },
+        e('div', { className:'text-5xl text-center mb-2' }, '🍺🎉'),
+        e('h2', { className:'text-2xl text-center text-red-600 mb-2', style:block }, t.register),
+        e('p', { className:'text-center text-red-700 mb-1 text-sm' }, t.regDesc),
+        e('p', { className:'text-center text-gray-600 mb-3 text-xs italic' }, t.regNote),
+        pendingStamp?.brewery && e('div', { className:'bg-green-600 border-2 border-black p-2 mb-3 text-center' },
+          e('p', { className:'text-white text-sm' }, '📍 First stop:'),
+          e('p', { className:'text-yellow-300 font-bold', style:block }, pendingStamp.brewery.name)
+        ),
+        e('div', { className:'space-y-2' },
+          e('div', null,
+            e('label', { className:'text-red-600 text-sm font-bold' }, t.name+' *'),
+            e('input', { type:'text', value:regName, onChange:ev=>setRegName(ev.target.value), className:'w-full px-3 py-2 border-4 border-black text-lg', placeholder:'Your name' })
+          ),
+          e('div', null,
+            e('label', { className:'text-red-600 text-sm font-bold' }, t.email+' *'),
+            e('input', { type:'email', value:regEmail, onChange:ev=>setRegEmail(ev.target.value), className:'w-full px-3 py-2 border-4 border-black text-lg', placeholder:'your@email.com' })
+          ),
+          e('div', null,
+            e('label', { className:'text-red-600 text-sm font-bold' }, t.phone+' (optional)'),
+            e('input', { type:'tel', value:regPhone, onChange:ev=>setRegPhone(ev.target.value), className:'w-full px-3 py-2 border-4 border-black text-lg', placeholder:'0901234567' })
+          ),
+          e('button', { onClick:completeRegistration, disabled:!regName.trim()||!regEmail.trim(), className:`w-full ${regName.trim()&&regEmail.trim()?'bg-green-600':'bg-gray-400'} text-white py-4 mt-2 text-2xl border-4 border-black`, style:block }, '🍺 '+t.go)
+        )
       )
     )
   );
@@ -732,10 +864,15 @@ function App() {
     faqModal,
     qrModal,
     saveProgressModal,
+    registerModal,
     beerLogModal,
     myBeersModal,
     completionModal,
-    breweryModal
+    breweryModal,
+    // Toast notification
+    showToast && e('div', { className:'fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg border-4 border-black shadow-lg z-[80] animate-pulse' },
+      e('p', { className:'text-lg font-bold text-center', style:block }, toastMessage)
+    )
   );
 }
 
