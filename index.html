@@ -69,6 +69,45 @@ function App() {
   const [regPhone, setRegPhone] = useState('');
   const [pendingStamp, setPendingStamp] = useState(null);
   const [autoStamped, setAutoStamped] = useState(false);
+  const [resetTaps, setResetTaps] = useState(0);
+
+  // Reset function
+  const resetCard = () => {
+    if (confirm('Are you sure you want to reset your Ale Trail card? This will delete ALL stamps, beers, and progress!')) {
+      localStorage.removeItem('aletrail_stamps');
+      localStorage.removeItem('aletrail_beerlogs');
+      localStorage.removeItem('aletrail_user');
+      setStamps([]);
+      setBeerLogs([]);
+      setUserInfo(null);
+      setCompletionName('');
+      setCompletionEmail('');
+      setCompletionPhone('');
+      setCompletionSubmitted(false);
+      alert('Card reset! Start fresh at any brewery.');
+      window.location.href = window.location.pathname;
+    }
+  };
+
+  // Secret tap to reset (tap title 5 times)
+  const handleTitleTap = () => {
+    const newTaps = resetTaps + 1;
+    setResetTaps(newTaps);
+    if (newTaps >= 5) {
+      setResetTaps(0);
+      resetCard();
+    }
+    // Reset tap count after 3 seconds of no tapping
+    setTimeout(() => setResetTaps(0), 3000);
+  };
+
+  // Check for reset URL parameter
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('reset') === 'true') {
+      resetCard();
+    }
+  }, []);
   
   // Beer log form state
   const [beerName, setBeerName] = useState('');
@@ -831,7 +870,7 @@ function App() {
     e('div', { className:'max-w-md mx-auto' },
       e('div', { className:'flex justify-center gap-1 mb-2' }, flagBtns),
       e('div', { className:'bg-yellow-400 border-4 border-black p-2 mb-2 text-center' },
-        e('h1', { className:'text-3xl sm:text-4xl md:text-5xl text-red-600 leading-none', style:{...block,letterSpacing:'2px'} }, 'HCM ALE TRAIL'),
+        e('h1', { onClick:handleTitleTap, className:'text-3xl sm:text-4xl md:text-5xl text-red-600 leading-none cursor-pointer select-none', style:{...block,letterSpacing:'2px'} }, 'HCM ALE TRAIL'),
         e('p', { className:'text-xs text-red-700 mt-2 px-2 leading-relaxed', style:{fontFamily:'sans-serif', fontWeight:'normal', textTransform:'none', letterSpacing:'0.3px'} }, t.welcome)
       ),
       e('div', { className:'bg-black border-4 border-yellow-400 p-2 mb-2' },
