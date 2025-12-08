@@ -55,6 +55,9 @@ function App() {
   const [showBeerLog, setShowBeerLog] = useState(false);
   const [showMyBeers, setShowMyBeers] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [showSaveProgress, setShowSaveProgress] = useState(false);
+  const [saveEmail, setSaveEmail] = useState('');
+  const [saveSent, setSaveSent] = useState(false);
   const [copied, setCopied] = useState(false);
   const [autoStamped, setAutoStamped] = useState(false);
   
@@ -123,6 +126,8 @@ function App() {
       name:"NAME", email:"EMAIL", phone:"PHONE", submit:"SUBMIT", thanks:"THANKS!",
       collectHat:"Show this screen to collect your hat!", beersAt:"Beers at",
       welcome:"Welcome to the HCM Ale Trail! Visit 8 awesome taprooms across Saigon. Buy a drink, collect a stamp, and get a free Ale Trail hat at your last stop! No deadline — do it in a day or a year.",
+      tips:"KEEP YOUR STAMPS", tip1:"Always use the same browser (Safari OR Chrome, not both)", tip2:"Don't use Private/Incognito mode", tip3:"Don't clear browser data until you finish!",
+      saveProgress:"SAVE PROGRESS", saveDesc:"Email yourself a recovery link", emailPlaceholder:"Enter your email", sendLink:"SEND RECOVERY LINK", linkSent:"CHECK YOUR EMAIL!", linkCopied:"LINK COPIED!",
       tag1: "Funky names, creative food, and the OG craft beer hangout.",
       tag2: "Bold beers, bold branding. Known for IPAs, stouts, and indie taproom vibe.",
       tag3: "Underground feel with clean, small-batch brews. A local hidden gem.",
@@ -143,6 +148,8 @@ function App() {
       name:"TÊN", email:"EMAIL", phone:"SỐ ĐIỆN THOẠI", submit:"GỬI", thanks:"CẢM ƠN!",
       collectHat:"Cho nhân viên xem màn hình này để nhận mũ!", beersAt:"Bia tại",
       welcome:"Chào mừng đến HCM Ale Trail! Ghé 8 quán bia thủ công ở Sài Gòn. Mua bia, lấy tem, đổi mũ miễn phí! Không giới hạn thời gian.",
+      tips:"GIỮ TEM CỦA BẠN", tip1:"Luôn dùng cùng 1 trình duyệt (Safari HOẶC Chrome)", tip2:"Không dùng chế độ ẩn danh", tip3:"Không xóa dữ liệu trình duyệt!",
+      saveProgress:"LƯU TIẾN TRÌNH", saveDesc:"Gửi link khôi phục qua email", emailPlaceholder:"Nhập email của bạn", sendLink:"GỬI LINK", linkSent:"KIỂM TRA EMAIL!", linkCopied:"ĐÃ SAO CHÉP!",
       tag1: "Tên độc đáo, đồ ăn sáng tạo, và quán bia thủ công đầu tiên của Sài Gòn.",
       tag2: "Bia đậm đà, thương hiệu nổi bật. Nổi tiếng với IPA, stout và không gian indie.",
       tag3: "Phong cách underground với bia nhỏ mẻ, sạch. Viên ngọc ẩn của địa phương.",
@@ -163,6 +170,8 @@ function App() {
       name:"이름", email:"이메일", phone:"전화번호", submit:"제출", thanks:"감사합니다!",
       collectHat:"이 화면을 보여주고 모자를 받으세요!", beersAt:"맥주:",
       welcome:"HCM Ale Trail에 오신 것을 환영합니다! 사이공의 8개 탭룸을 방문하세요. 음료를 사고, 스탬프를 모으고, 마지막에 무료 모자를 받으세요!",
+      tips:"스탬프 유지 팁", tip1:"항상 같은 브라우저 사용 (Safari 또는 Chrome)", tip2:"시크릿/프라이빗 모드 사용 금지", tip3:"완료 전 브라우저 데이터 삭제 금지!",
+      saveProgress:"진행 저장", saveDesc:"복구 링크를 이메일로 받기", emailPlaceholder:"이메일 입력", sendLink:"링크 전송", linkSent:"이메일 확인!", linkCopied:"복사됨!",
       tag1: "독특한 이름, 창의적인 음식, 오리지널 크래프트 비어 명소.",
       tag2: "대담한 맥주, 대담한 브랜딩. IPA, 스타우트, 인디 탭룸 분위기로 유명.",
       tag3: "언더그라운드 느낌의 깔끔한 소규모 양조장. 숨겨진 보석.",
@@ -183,6 +192,8 @@ function App() {
       name:"名前", email:"メール", phone:"電話番号", submit:"送信", thanks:"ありがとう!",
       collectHat:"この画面を見せて帽子をもらおう!", beersAt:"ビール:",
       welcome:"HCM Ale Trailへようこそ！サイゴンの8つのタップルームを訪れて、ドリンクを買い、スタンプを集めて、無料の帽子をゲットしよう！",
+      tips:"スタンプを守る", tip1:"同じブラウザを使用（SafariかChromeどちらか）", tip2:"プライベートモード使用禁止", tip3:"完了までデータ削除禁止！",
+      saveProgress:"進捗を保存", saveDesc:"復元リンクをメールで受け取る", emailPlaceholder:"メールアドレス", sendLink:"リンク送信", linkSent:"メール確認！", linkCopied:"コピー完了！",
       tag1: "ユニークな名前、創造的な料理、元祖クラフトビールの聖地。",
       tag2: "大胆なビール、大胆なブランディング。IPA、スタウト、インディーな雰囲気で有名。",
       tag3: "アンダーグラウンドな雰囲気、クリーンな小規模醸造。隠れた名店。",
@@ -306,6 +317,56 @@ function App() {
   const prog = (stamps.length / 8) * 100;
   const beersAtBrewery = (id) => beerLogs.filter(b => b.breweryId === id);
 
+  // Generate recovery URL with encoded data
+  const generateRecoveryUrl = () => {
+    const data = { stamps, beerLogs, userInfo };
+    const encoded = btoa(JSON.stringify(data));
+    return window.location.origin + window.location.pathname + '?recover=' + encoded;
+  };
+
+  // Send recovery link via email
+  const sendRecoveryEmail = () => {
+    if (!saveEmail.trim()) return;
+    const recoveryUrl = generateRecoveryUrl();
+    const subject = 'HCM Ale Trail - Your Progress Recovery Link';
+    const body = `Here's your HCM Ale Trail recovery link!\n\nYou have ${stamps.length}/8 stamps collected.\n\nClick this link to restore your progress:\n${recoveryUrl}\n\nKeep this email safe until you complete the trail! 🍺`;
+    window.open('mailto:' + saveEmail + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body));
+    setSaveSent(true);
+    setTimeout(() => { setSaveSent(false); setShowSaveProgress(false); setSaveEmail(''); }, 3000);
+  };
+
+  // Copy recovery link
+  const copyRecoveryLink = () => {
+    navigator.clipboard.writeText(generateRecoveryUrl()).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  // Restore from recovery URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const recoverData = params.get('recover');
+    if (recoverData) {
+      try {
+        const data = JSON.parse(atob(recoverData));
+        if (data.stamps && Array.isArray(data.stamps)) {
+          setStamps(data.stamps);
+        }
+        if (data.beerLogs && Array.isArray(data.beerLogs)) {
+          setBeerLogs(data.beerLogs);
+        }
+        if (data.userInfo) {
+          setUserInfo(data.userInfo);
+        }
+        window.history.replaceState({}, '', window.location.pathname);
+        alert('Progress restored! You have ' + (data.stamps?.length || 0) + '/8 stamps.');
+      } catch (err) {
+        console.log('Recovery error:', err);
+      }
+    }
+  }, []);
+
   // FLAGS
   const flagBtns = flags.map(f => 
     e('button', { key:f.c, onClick:()=>setLang(f.c), className:`${lang===f.c?'ring-4 ring-yellow-400 scale-110':'opacity-50'} w-16 h-10 border-2 border-black overflow-hidden transition-all` },
@@ -359,7 +420,7 @@ function App() {
 
   // FAQ MODAL
   const faqModal = showFaq && e('div', { className:'fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4' },
-    e('div', { className:'bg-yellow-400 w-full max-w-sm border-4 border-black relative' },
+    e('div', { className:'bg-yellow-400 w-full max-w-sm border-4 border-black relative max-h-[85vh] overflow-y-auto' },
       e('button', { onClick:()=>setShowFaq(false), className:'absolute top-2 right-2 bg-red-600 text-yellow-400 w-10 h-10 flex items-center justify-center border-4 border-black text-2xl z-10', style:block }, 'X'),
       e('div', { className:'p-3 pt-10' },
         e('h2', { className:'text-3xl text-center text-red-600 mb-3', style:block }, t.how),
@@ -370,6 +431,15 @@ function App() {
           e('div', { className:'bg-green-600 border-2 border-black p-2 flex items-center gap-2' }, e('span',{className:'text-3xl text-white w-10',style:block},'4'), e('span',{className:'text-lg text-white flex-1',style:block},t.s4))
         ),
         e('div', { className:'bg-black border-2 border-yellow-400 p-2 mt-2' }, e('p',{className:'text-xl text-yellow-400 text-center',style:block},t.rush)),
+        // TIPS SECTION
+        e('div', { className:'bg-white border-2 border-black p-3 mt-3' },
+          e('p', { className:'text-lg text-red-600 font-bold mb-2', style:block }, '💡 '+t.tips),
+          e('ul', { className:'text-sm text-gray-700 space-y-1' },
+            e('li', null, '• '+t.tip1),
+            e('li', null, '• '+t.tip2),
+            e('li', null, '• '+t.tip3)
+          )
+        ),
         e('button', { onClick:()=>setShowFaq(false), className:'w-full bg-red-600 text-yellow-400 py-3 mt-2 text-3xl border-4 border-black', style:block }, t.ok)
       )
     )
@@ -387,6 +457,46 @@ function App() {
           e('p',{className:'text-lg text-yellow-400',style:block},'• POINT → TAP → DONE!')
         ),
         e('button', { onClick:()=>setShowQR(false), className:'w-full bg-green-600 text-white py-4 text-3xl border-4 border-black', style:block }, t.ok)
+      )
+    )
+  );
+
+  // SAVE PROGRESS MODAL
+  const saveProgressModal = showSaveProgress && e('div', { className:'fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4' },
+    e('div', { className:'bg-yellow-400 w-full max-w-sm border-4 border-black relative' },
+      e('button', { onClick:()=>{setShowSaveProgress(false);setSaveEmail('');setSaveSent(false);}, className:'absolute top-2 right-2 bg-red-600 text-yellow-400 w-10 h-10 flex items-center justify-center border-4 border-black text-2xl z-10', style:block }, 'X'),
+      e('div', { className:'p-3 pt-10' },
+        e('h2', { className:'text-2xl text-center text-red-600 mb-2', style:block }, '💾 '+t.saveProgress),
+        e('p', { className:'text-center text-red-700 mb-3 text-sm' }, t.saveDesc),
+        e('div', { className:'bg-white border-4 border-black p-3 mb-3 text-center' },
+          e('p', { className:'text-lg font-bold text-green-600' }, stamps.length + '/8 ' + t.stamps),
+          e('p', { className:'text-sm text-gray-600' }, beerLogs.length + ' ' + t.myBeers.toLowerCase())
+        ),
+        saveSent ? 
+          e('div', { className:'bg-green-600 border-4 border-black p-4 text-center' },
+            e('p', { className:'text-2xl text-white', style:block }, '✅ ' + t.linkSent)
+          ) :
+          e('div', { className:'space-y-2' },
+            e('input', { 
+              type:'email', 
+              value:saveEmail, 
+              onChange:ev=>setSaveEmail(ev.target.value), 
+              className:'w-full px-3 py-3 border-4 border-black text-lg text-center', 
+              placeholder:t.emailPlaceholder 
+            }),
+            e('button', { 
+              onClick:sendRecoveryEmail, 
+              disabled:!saveEmail.trim(), 
+              className:`w-full ${saveEmail.trim()?'bg-green-600':'bg-gray-400'} text-white py-3 text-xl border-4 border-black`, 
+              style:block 
+            }, '📧 '+t.sendLink),
+            e('div', { className:'text-center text-red-600 font-bold my-2' }, '— OR —'),
+            e('button', { 
+              onClick:copyRecoveryLink, 
+              className:`w-full ${copied?'bg-green-600':'bg-blue-600'} text-white py-3 text-xl border-4 border-black`, 
+              style:block 
+            }, copied ? '✅ '+t.linkCopied : '📋 COPY LINK')
+          )
       )
     )
   );
@@ -576,6 +686,7 @@ function App() {
         e('div', { className:'h-3 bg-red-900 border border-yellow-400 mt-1' },
           e('div', { className:'h-full bg-green-500 transition-all', style:{width:prog+'%'} })
         ),
+        stamps.length > 0 && e('button', { onClick:()=>setShowSaveProgress(true), className:'w-full bg-blue-600 text-white py-2 mt-2 text-sm border-2 border-yellow-400 flex items-center justify-center gap-1', style:block }, '💾 '+t.saveProgress),
         stamps.length === 8 && !userInfo?.completed && e('button', { onClick:()=>setShowCompletion(true), className:'w-full bg-green-600 text-white py-2 mt-2 text-lg border-2 border-yellow-400 animate-pulse', style:block }, '🎉 '+t.complete+' '+t.submit+'!')
       ),
       e('div', { className:'grid grid-cols-4 gap-1 mb-1' },
@@ -596,6 +707,7 @@ function App() {
     ),
     faqModal,
     qrModal,
+    saveProgressModal,
     beerLogModal,
     myBeersModal,
     completionModal,
