@@ -69,7 +69,6 @@ function App() {
   const [regBirthdate, setRegBirthdate] = useState('');
   const [pendingStamp, setPendingStamp] = useState(null);
   const [autoStamped, setAutoStamped] = useState(false);
-  const [resetTaps, setResetTaps] = useState(0);
 
   // Reset function
   const resetCard = () => {
@@ -88,24 +87,6 @@ function App() {
       window.location.href = window.location.pathname;
     }
   };
-
-  // Secret tap to reset (tap title 5 times)
-  const handleTitleTap = () => {
-    const newTaps = resetTaps + 1;
-    setResetTaps(newTaps);
-    if (newTaps >= 5) {
-      setResetTaps(0);
-      resetCard();
-    }
-  };
-  
-  // Reset tap count after 3 seconds of inactivity
-  useEffect(() => {
-    if (resetTaps > 0 && resetTaps < 5) {
-      const timer = setTimeout(() => setResetTaps(0), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [resetTaps]);
 
   // Check for reset URL parameter
   useEffect(() => {
@@ -876,8 +857,7 @@ function App() {
     e('div', { className:'max-w-md mx-auto' },
       e('div', { className:'flex justify-center gap-1 mb-2' }, flagBtns),
       e('div', { className:'bg-yellow-400 border-4 border-black p-2 mb-2 text-center' },
-        e('h1', { onClick:handleTitleTap, className:'text-3xl sm:text-4xl md:text-5xl text-red-600 leading-none cursor-pointer select-none active:scale-95 transition-transform', style:{...block,letterSpacing:'2px'} }, 'HCM ALE TRAIL'),
-        resetTaps > 0 && e('p', { className:'text-xs text-yellow-600' }, '🔄 ' + resetTaps + '/5 taps'),
+        e('h1', { className:'text-3xl sm:text-4xl md:text-5xl text-red-600 leading-none', style:{...block,letterSpacing:'2px'} }, 'HCM ALE TRAIL'),
         e('p', { className:'text-xs text-red-700 mt-2 px-2 leading-relaxed', style:{fontFamily:'sans-serif', fontWeight:'normal', textTransform:'none', letterSpacing:'0.3px'} }, t.welcome)
       ),
       e('div', { className:'bg-black border-4 border-yellow-400 p-2 mb-2' },
@@ -905,7 +885,10 @@ function App() {
         e('a', { href:links.msg, target:'_blank', rel:'noopener noreferrer', className:'bg-blue-500 text-white py-2 text-sm border-4 border-black active:scale-95 transition-all text-center flex items-center justify-center gap-1', style:block }, e(Messenger,{size:18}), 'MESSENGER')
       ),
       e('div', { className:'space-y-1' }, breweryList),
-      e('div', { className:'mt-2 text-center' }, e('p',{className:'text-lg text-yellow-400',style:block},t.copy))
+      e('div', { className:'mt-2 text-center' }, e('p',{className:'text-lg text-yellow-400',style:block},t.copy)),
+      e('div', { className:'mt-4 text-center' }, 
+        e('button', { onClick:resetCard, className:'text-xs text-yellow-600 underline opacity-50' }, 'Reset Card')
+      )
     ),
     faqModal,
     qrModal,
