@@ -20,9 +20,9 @@ const e = React.createElement;
 const { useState, useEffect } = React;
 
 // ============================================
-// GOOGLE SHEETS CONFIG - REPLACE WITH YOUR URL
+// GOOGLE SHEETS CONFIG
 // ============================================
-const GOOGLE_SHEETS_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwqPRXw7iknhejI-1D4eiTQGslIL83LkmV4x2jq-E0UvZnA_7HM7D1N5CAP3xJM33KfmA/exec';
 // ============================================
 
 const block = { fontFamily: 'Impact, Haettenschweiler, "Arial Black", sans-serif', fontWeight: 900, letterSpacing: '0.5px', textTransform: 'uppercase' };
@@ -217,7 +217,7 @@ function App() {
 
   // Send data to Google Sheets
   const sendToSheets = async (data) => {
-    if (GOOGLE_SHEETS_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+    if (!GOOGLE_SHEETS_URL || GOOGLE_SHEETS_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
       console.log('Google Sheets not configured. Data:', data);
       return;
     }
@@ -228,6 +228,7 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
+      console.log('Sent to Google Sheets:', data);
     } catch (err) {
       console.log('Sheet error:', err);
     }
@@ -350,8 +351,8 @@ function App() {
   // STAR RATING COMPONENT
   const StarRating = ({value, onChange}) => e('div', { className:'flex gap-1 justify-center' },
     [1,2,3,4,5].map(i => 
-      e('button', { key:i, type:'button', onClick:()=>onChange(i), className:'text-yellow-500 hover:scale-110 transition-all' },
-        e(Star, { size:32, filled: i <= value })
+      e('button', { key:i, type:'button', onClick:()=>onChange(i), className:`${i <= value ? 'text-orange-500' : 'text-gray-300'} hover:scale-110 transition-all` },
+        e(Star, { size:36, filled: i <= value })
       )
     )
   );
@@ -435,7 +436,7 @@ function App() {
                     e('p', { className:'font-bold text-red-600' }, beer.name),
                     e('p', { className:'text-xs text-gray-600' }, beer.breweryName)
                   ),
-                  e('div', { className:'flex text-yellow-500' },
+                  e('div', { className:'flex text-orange-500' },
                     [1,2,3,4,5].map(i => e(Star, { key:i, size:12, filled:i<=beer.rating }))
                   )
                 ),
@@ -526,7 +527,7 @@ function App() {
           beersAtBrewery(selected.id).map(beer => 
             e('div', { key:beer.id, className:'flex justify-between items-center text-sm py-1 border-b border-gray-200 last:border-0' },
               e('span', null, beer.name),
-              e('span', { className:'flex text-yellow-500' }, [1,2,3,4,5].map(i => e(Star,{key:i,size:10,filled:i<=beer.rating})))
+              e('span', { className:'flex text-orange-500' }, [1,2,3,4,5].map(i => e(Star,{key:i,size:10,filled:i<=beer.rating})))
             )
           )
         ),
@@ -581,8 +582,8 @@ function App() {
         e('button', { onClick:()=>setShowFaq(true), className:'bg-yellow-400 text-red-600 py-2 text-sm border-4 border-black active:scale-95 transition-all', style:block }, t.faq),
         e('a', { href:links.website, target:'_blank', rel:'noopener noreferrer', className:'bg-black text-yellow-400 py-2 text-sm border-4 border-yellow-400 active:scale-95 transition-all text-center flex items-center justify-center', style:block }, t.web),
         e('a', { href:links.maps, target:'_blank', rel:'noopener noreferrer', className:'bg-green-600 text-white py-2 text-sm border-4 border-black active:scale-95 transition-all text-center flex items-center justify-center', style:block }, t.maps),
-        e('button', { onClick:()=>setShowMyBeers(true), className:'bg-orange-500 text-white py-2 text-sm border-4 border-black active:scale-95 transition-all relative', style:block }, 
-          '🍺',
+        e('button', { onClick:()=>setShowMyBeers(true), className:'bg-orange-500 text-white py-2 text-xs border-4 border-black active:scale-95 transition-all relative flex items-center justify-center gap-1', style:block }, 
+          t.myBeers,
           beerLogs.length > 0 && e('span', { className:'absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center' }, beerLogs.length)
         )
       ),
