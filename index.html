@@ -62,6 +62,7 @@ function App() {
   const [copied, setCopied] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   
   // Registration form
   const [regName, setRegName] = useState('');
@@ -72,27 +73,26 @@ function App() {
 
   // Reset function
   const resetCard = () => {
-    if (confirm('Are you sure you want to reset your Ale Trail card? This will delete ALL stamps, beers, and progress!')) {
-      localStorage.removeItem('aletrail_stamps');
-      localStorage.removeItem('aletrail_beerlogs');
-      localStorage.removeItem('aletrail_user');
-      setStamps([]);
-      setBeerLogs([]);
-      setUserInfo(null);
-      setCompletionName('');
-      setCompletionEmail('');
-      setCompletionBirthdate('');
-      setCompletionSubmitted(false);
-      alert('Card reset! Start fresh at any brewery.');
-      window.location.href = window.location.pathname;
-    }
+    localStorage.removeItem('aletrail_stamps');
+    localStorage.removeItem('aletrail_beerlogs');
+    localStorage.removeItem('aletrail_user');
+    setStamps([]);
+    setBeerLogs([]);
+    setUserInfo(null);
+    setCompletionName('');
+    setCompletionEmail('');
+    setCompletionBirthdate('');
+    setCompletionSubmitted(false);
+    setShowResetConfirm(false);
+    window.location.href = window.location.pathname;
   };
 
   // Check for reset URL parameter
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('reset') === 'true') {
-      resetCard();
+      setShowResetConfirm(true);
+      window.history.replaceState({}, '', window.location.pathname);
     }
   }, []);
   
@@ -886,8 +886,8 @@ function App() {
       ),
       e('div', { className:'space-y-1' }, breweryList),
       e('div', { className:'mt-2 text-center' }, e('p',{className:'text-lg text-yellow-400',style:block},t.copy)),
-      e('div', { className:'mt-4 text-center' }, 
-        e('button', { onClick:resetCard, className:'text-xs text-yellow-600 underline opacity-50' }, 'Reset Card')
+      e('div', { className:'mt-4 text-center pb-4' }, 
+        e('button', { onClick:()=>setShowResetConfirm(true), className:'text-xs text-yellow-600 underline opacity-50 py-2 px-4' }, 'Reset Card')
       )
     ),
     faqModal,
@@ -901,6 +901,18 @@ function App() {
     // Toast notification
     showToast && e('div', { className:'fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg border-4 border-black shadow-lg z-[80] animate-pulse' },
       e('p', { className:'text-lg font-bold text-center', style:block }, toastMessage)
+    ),
+    // Reset confirmation modal
+    showResetConfirm && e('div', { className:'fixed inset-0 bg-black/90 z-[90] flex items-center justify-center p-4' },
+      e('div', { className:'bg-yellow-400 w-full max-w-sm border-4 border-black p-4' },
+        e('div', { className:'text-5xl text-center mb-3' }, '⚠️'),
+        e('h2', { className:'text-xl text-center text-red-600 mb-2', style:block }, 'RESET CARD?'),
+        e('p', { className:'text-center text-red-700 mb-4 text-sm' }, 'This will delete ALL your stamps, beers, and progress. This cannot be undone!'),
+        e('div', { className:'flex gap-2' },
+          e('button', { onClick:()=>setShowResetConfirm(false), className:'flex-1 bg-gray-500 text-white py-3 text-lg border-4 border-black', style:block }, 'CANCEL'),
+          e('button', { onClick:resetCard, className:'flex-1 bg-red-600 text-white py-3 text-lg border-4 border-black', style:block }, 'RESET')
+        )
+      )
     )
   );
 }
